@@ -1,8 +1,8 @@
 # CAPTCHA library written in Rust
 
-A library to generate CAPTCHAs like that:
+A library to generate CAPTCHAs like these:
 
-![captcha](doc/captcha3.png)
+![captcha](doc/captcha3.png) &nbsp; ![captcha](doc/captcha2.png)
 
 ## Requirements
 * Rust
@@ -45,10 +45,8 @@ This example creates the following three CAPTCHA images:
 * /tmp/captcha2.png
 * /tmp/captcha3.png
 
-The images will look like the following three images:
+The generated images will look like the following three images:
 
-![captcha](doc/captcha1.png)
-
-![captcha](doc/captcha2.png)
-
+![captcha](doc/captcha1.png) &nbsp; ![captcha](doc/captcha2.png)
+&nbsp;
 ![captcha](doc/captcha3.png)
