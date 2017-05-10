@@ -111,10 +111,10 @@ impl Image {
         }
     }
 
-    pub fn as_png(self) -> Option<Vec<u8>> {
+    pub fn as_png(&self) -> Option<Vec<u8>> {
         let w = self.img.width() as usize;
         let h = self.img.height() as usize;
-        let i = self.img.into_raw();
+        let i = self.img.clone().into_raw();
         match lodepng::encode_memory(&i, w, h, lodepng::ColorType::LCT_RGB, 8) {
             Err(_) => None,
             Ok(v)  => {

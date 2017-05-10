@@ -23,6 +23,14 @@ impl Wave {
         }
     }
 
+    pub fn horizontal(self) -> Wave {
+        Wave { d: Direction::HORIZONTAL, .. self }
+    }
+
+    pub fn vertical(self) -> Wave {
+        Wave { d: Direction::VERTICAL, .. self }
+    }
+
     pub fn direction(self, d: Direction) -> Wave {
         Wave { d: d, .. self }
     }

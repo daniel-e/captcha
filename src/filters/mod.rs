@@ -1,4 +1,4 @@
-pub mod noise;
+mod noise;
 mod grid;
 mod cow;
 mod dots;
@@ -11,8 +11,8 @@ pub use filters::noise::Noise;
 pub use filters::grid::Grid;
 pub use filters::cow::Cow;
 pub use filters::dots::Dots;
-pub use filters::wave::{Wave, Direction};
+pub use filters::wave::Wave;
 
 pub trait Filter {
-    fn apply(&self, &mut Image);
+    fn apply(&self, i: &mut Image);
 }
