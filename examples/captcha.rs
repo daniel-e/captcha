@@ -48,7 +48,7 @@ fn easy_with_dots_wave(p: &Path) {
 }
 
 fn main() {
-    easy(Path::new("/tmp/captcha_easy.png"));
-    easy_with_dots(Path::new("/tmp/captcha_easy.png"));
-    easy_with_dots_wave(Path::new("/tmp/captcha_easy.png"));
+    easy(Path::new("/tmp/captcha1.png"));
+    easy_with_dots(Path::new("/tmp/captcha2.png"));
+    easy_with_dots_wave(Path::new("/tmp/captcha3.png"));
 }

@@ -3,15 +3,13 @@ name = "captcha"
 version = "0.0.1"
 authors = ["daniel-e <git.daniele@gmail.com>"]
 description = "Library for generating CAPTCHAs."
-license = "MIT"
 license-file = "LICENSE.md"
 keywords = ["CAPTCHA"]
 readme = "README.md"
 exclude = ["gen/*", "captcha.iml", ".idea"]
-
-#documentation = "url"
-#homepage = "url"
-#repository = "url"
+documentation = "https://github.com/daniel-e/captcha"
+homepage = "https://github.com/daniel-e/captcha"
+repository = "https://github.com/daniel-e/captcha"
 
 [dependencies]
 image = "0.13.0"
