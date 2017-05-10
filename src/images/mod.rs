@@ -1,8 +1,10 @@
 use std::io::Result;
 use std::path::Path;
 use std::cmp::{min, max};
+use std::iter::FromIterator;
 
 use image::{RgbImage, ImageBuffer, Rgb, load_from_memory};
+use lodepng;
 
 #[derive(Clone, Copy)]
 pub struct Pixl {
@@ -105,6 +107,18 @@ impl Image {
         for iy in 0..i.height() {
             for ix in 0..i.width() {
                 self.put_pixel(x + ix, y + iy, i.get_pixel(ix, iy));
+            }
+        }
+    }
+
+    pub fn as_png(self) -> Option<Vec<u8>> {
+        let w = self.img.width() as usize;
+        let h = self.img.height() as usize;
+        let i = self.img.into_raw();
+        match lodepng::encode_memory(&i, w, h, lodepng::ColorType::LCT_RGB, 8) {
+            Err(_) => None,
+            Ok(v)  => {
+                Some(Vec::from_iter(v.as_ref().iter().cloned()))
             }
         }
     }

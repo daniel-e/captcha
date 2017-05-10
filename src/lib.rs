@@ -2,6 +2,7 @@ extern crate image;
 extern crate rand;
 extern crate serde_json;
 extern crate base64;
+extern crate lodepng;
 
 pub mod filters;
 mod images;
@@ -124,6 +125,17 @@ impl Captcha {
         // TODO update text area
         self
     }
+
+    pub fn add_chars(&mut self, n: u32) -> &mut Self {
+        for _ in 0..n {
+            self.add_char();
+        }
+        self
+    }
+
+    pub fn as_png(self) -> Option<Vec<u8>> {
+        self.img.as_png()
+    }
 }
 
 #[cfg(test)]
@@ -133,6 +145,8 @@ mod tests {
     use fonts::Default;
 
     use std::path::Path;
+    use std::fs::File;
+    use std::io::Write;
 
     #[test]
     fn it_works() {
@@ -152,5 +166,10 @@ mod tests {
         c.extract(a)
             .save(Path::new("/tmp/a.png"))
             .expect("save failed");
+
+        let data = c.as_png().expect("no png");
+        let mut f = File::create(Path::new("/tmp/b.png")).expect("err");
+        f.write(&data);
+
     }
 }

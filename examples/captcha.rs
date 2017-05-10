@@ -7,11 +7,7 @@ use std::path::Path;
 
 fn easy(p: &Path) {
     let mut c = Captcha::new();
-    c.add_char()
-        .add_char()
-        .add_char()
-        .add_char()
-        .add_char()
+    c.add_chars(5)
         .apply_filter(Noise::new(0.1))
         .apply_filter(Grid::new(5, 5))
         .view(220, 120)
@@ -20,11 +16,7 @@ fn easy(p: &Path) {
 
 fn easy_with_dots(p: &Path) {
     let mut c = Captcha::new();
-    c.add_char()
-        .add_char()
-        .add_char()
-        .add_char()
-        .add_char()
+    c.add_chars(5)
         .apply_filter(Noise::new(0.3))
         .apply_filter(Grid::new(5, 5))
         .view(220, 120)
@@ -34,11 +26,7 @@ fn easy_with_dots(p: &Path) {
 
 fn easy_with_dots_wave(p: &Path) {
     let mut c = Captcha::new();
-    c.add_char()
-        .add_char()
-        .add_char()
-        .add_char()
-        .add_char()
+    c.add_chars(5)
         .apply_filter(Noise::new(0.4))
         .apply_filter(Wave::new(2.0, 20.0).direction(Direction::HORIZONTAL))
         .apply_filter(Wave::new(2.0, 20.0).direction(Direction::VERTICAL))

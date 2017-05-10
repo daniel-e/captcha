@@ -25,13 +25,14 @@ use captcha::Captcha;
 use captcha::filters::Noise;
 use std::path::Path;
 
-let mut c = Captcha::new();
-c.add_char()
-    .add_char()
-    .add_char()
-    .apply_filter(Noise::new(0.1))
-    .view(220, 120)
-    .save(Path::new("/tmp/captcha.png").expect("save failed");
+fn main() {
+    Captcha::new()
+        .add_chars(5)
+        .apply_filter(Noise::new(0.1))
+        .view(220, 120)
+        .save(Path::new("/tmp/captcha.png"))
+        .expect("save failed");
+}
 ```
 
 ## Running the example
