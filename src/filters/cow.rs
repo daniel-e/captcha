@@ -4,12 +4,14 @@ use std::collections::BTreeSet;
 
 use images::Image;
 use filters::Filter;
+use Geometry;
 
 pub struct Cow {
     min_radius: u32,
     max_radius: u32,
     n: u32,
-    allow_duplicates: bool
+    allow_duplicates: bool,
+    geometry: Option<Geometry>
 }
 
 impl Cow {
@@ -18,7 +20,8 @@ impl Cow {
             min_radius: 10,
             max_radius: 20,
             n: 3,
-            allow_duplicates: true
+            allow_duplicates: true,
+            geometry: None
         }
     }
 
@@ -32,6 +35,11 @@ impl Cow {
 
     pub fn max_radius(self, max_radius: u32) -> Self {
         Cow { max_radius: max_radius, .. self }
+    }
+
+    // right + bottom = inclusive
+    pub fn area(self, g: Geometry) -> Self {
+        Cow { geometry: Some(g), .. self }
     }
 
     fn get_pixels(x: i32, y: i32, r: i32, i: &mut Image) -> Vec<(u32, u32)> {
@@ -65,7 +73,13 @@ impl Cow {
 impl Filter for Cow {
     fn apply(&self, i: &mut Image) {
         let mut rng = thread_rng();
-        let mut pixels = vec![(rng.gen_range(0, i.width()), rng.gen_range(0, i.height()))];
+
+        let g = match self.geometry {
+            Some(ref x) => x.clone(),
+            None        => Geometry::new(0, i.width() - 1, 0, i.height() - 1),
+        };
+
+        let mut pixels = vec![(rng.gen_range(g.left, g.right + 1), rng.gen_range(g.top, g.bottom + 1))];
         let mut set = BTreeSet::new();
 
         for _ in 0..self.n {

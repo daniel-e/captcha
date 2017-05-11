@@ -14,18 +14,27 @@
 //! # }
 //! ```
 use rand::{Rng, thread_rng};
-use Captcha;
-use filters::{Noise, Grid, Dots, Wave};
+use {Geometry, Captcha};
+use filters::{Noise, Grid, Dots, Wave, Cow};
 
 const WIDTH: u32 = 220;
 const HEIGHT: u32 = 120;
 
-/// Represents the difficulty of a CAPTCHA.
+/// The difficulty of a CAPTCHA.
 pub enum Difficulty {
     Easy,
     Medium,
     Hard
 }
+
+/// Names of predefined CAPTCHAs.
+pub enum CaptchaName {
+    Amelia,
+    Lucy,
+    Mila,
+}
+
+const N: u32 = 3; // TODO more automatic: extending names is error prone
 
 /// Creates a random CAPTCHA with the given difficulty.
 ///
@@ -34,46 +43,98 @@ pub enum Difficulty {
 ///
 /// If you need more flexibility please have a look at [`Captcha`](../struct.Captcha.html).
 pub fn gen(d: Difficulty) -> Captcha {
-    match d {
-        Difficulty::Easy   => easy(),
-        Difficulty::Medium => medium(),
-        Difficulty::Hard   => hard()
+    match thread_rng().gen::<u32>() % N {
+        0 => by_name(d, CaptchaName::Lucy),
+        1 => by_name(d, CaptchaName::Mila),
+        _ => by_name(d, CaptchaName::Amelia)
     }
 }
+
+
+/// Creates a predefined CAPTCHA by its name.
+///
+/// The CAPTCHAs look similar to the following ones:
+///
+/// ## Amelia
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_easy.png"> &nbsp;
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_medium.png"> &nbsp;
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_hard.png">
+///
+/// ## Lucy
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_easy.png"> &nbsp;
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_medium.png"> &nbsp;
+/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_hard.png">
+pub fn by_name(d: Difficulty, t: CaptchaName) -> Captcha {
+    match t {
+        CaptchaName::Amelia => captcha_amelia(d),
+        CaptchaName::Lucy   => captcha_lucy(d),
+        CaptchaName::Mila   => captcha_mila(d),
+    }
+}
+
+// -------------------------------------------
 
 fn rnd() -> u32 {
     let mut rng = thread_rng();
     rng.gen_range(4, 7)
 }
 
-fn easy() -> Captcha {
+fn captcha_lucy(d: Difficulty) -> Captcha {
+    let (n, g) = match d {
+        Difficulty::Easy => (0.1, 8),
+        Difficulty::Medium => (0.4, 6),
+        Difficulty::Hard => (0.6, 4)
+    };
+
     let mut c = Captcha::new();
     c.add_chars(rnd())
-        .apply_filter(Noise::new(0.1))
-        .apply_filter(Grid::new(8, 8))
-        .view(WIDTH, HEIGHT);
+     .apply_filter(Noise::new(n))
+     .apply_filter(Grid::new(g, g))
+     .view(WIDTH, HEIGHT);
     c
 }
 
-fn medium() -> Captcha {
+fn captcha_mila(d: Difficulty) -> Captcha {
     let mut c = Captcha::new();
-    c.add_chars(5)
-        .apply_filter(Noise::new(0.2))
-        .apply_filter(Grid::new(8, 8))
-        .view(WIDTH, HEIGHT)
-        .apply_filter(Dots::new(20).max_radius(7).min_radius(4));
+    c.add_chars(rnd());
+    match d {
+        Difficulty::Easy   => c.apply_filter(Noise::new(0.2)),
+        Difficulty::Medium => c.apply_filter(Noise::new(0.3)),
+        Difficulty::Hard   => c.apply_filter(Noise::new(0.5))
+    };
+    c.apply_filter(Wave::new(2.0, 20.0))
+     .view(WIDTH, HEIGHT)
+     .apply_filter(Cow::new().min_radius(40).max_radius(50).circles(1).area(Geometry::new(40, 150, 50, 70)));
     c
 }
 
-fn hard() -> Captcha {
+fn captcha_amelia(d: Difficulty) -> Captcha {
     let mut c = Captcha::new();
-    c.add_chars(rnd())
-        .apply_filter(Noise::new(0.4))
-        .apply_filter(Wave::new(2.0, 20.0).horizontal())
-        .apply_filter(Wave::new(2.0, 20.0).vertical())
-        .view(WIDTH, HEIGHT)
-        .apply_filter(Dots::new(15));
+    c.add_chars(rnd());
+    match d {
+        Difficulty::Easy   => c.apply_filter(Noise::new(0.2)).apply_filter(Grid::new(8, 8)),
+        Difficulty::Medium => c.apply_filter(Noise::new(0.3)).apply_filter(Grid::new(6, 6)),
+        Difficulty::Hard   => c.apply_filter(Noise::new(0.5)).apply_filter(Grid::new(4, 4))
+    };
+    c.apply_filter(Wave::new(2.0, 10.0)).view(WIDTH, HEIGHT);
+    match d {
+        Difficulty::Easy   => c.apply_filter(Dots::new(10).max_radius(7).min_radius(3)),
+        Difficulty::Medium => c.apply_filter(Dots::new(15).max_radius(7).min_radius(4)),
+        Difficulty::Hard   => c.apply_filter(Dots::new(20).max_radius(7).min_radius(5)),
+    } ;
     c
 }
+
+
+//fn hard() -> Captcha {
+//    let mut c = Captcha::new();
+//    c.add_chars(rnd())
+//        .apply_filter(Noise::new(0.4))
+//        .apply_filter(Wave::new(2.0, 20.0).horizontal())
+//        .apply_filter(Wave::new(2.0, 20.0).vertical())
+//        .view(WIDTH, HEIGHT)
+//        .apply_filter(Dots::new(15));
+//    c
+//}
 
 

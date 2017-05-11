@@ -51,7 +51,7 @@ mod samples;
 mod images;
 mod fonts;
 
-pub use samples::{gen, Difficulty};
+pub use samples::{gen, by_name, Difficulty, CaptchaName};
 
 use filters::Filter;
 use images::{Image, Pixl};
@@ -73,6 +73,14 @@ pub struct Geometry {
     pub top: u32,
     /// The maximum y coordinate of the area which contains text (inclusive).
     pub bottom: u32
+}
+
+impl Geometry {
+    pub fn new(left: u32, right: u32, top: u32, bottom: u32) -> Geometry {
+        Geometry {
+            left: left, right: right, top: top, bottom: bottom
+        }
+    }
 }
 
 /// Used to build a CAPTCHA step by step.
