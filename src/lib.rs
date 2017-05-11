@@ -3,6 +3,8 @@
 //! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha3.png"> &nbsp;
 //! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha2.png">
 //!
+//! For a more detailed list of predefined CAPTCHAS please have a look at [`by_name`](fn.by_name.html).
+//!
 //! The crate offers two ways to create CAPTCHAs. The first way is the most easiest one. Just one
 //! line of code is necessary to create a random CAPTCHA in of a given category. The category can be
 //! either `Easy`, `Medium` or `Hard`. The size of the CAPTCHA is 220x120 pixels and the number of
