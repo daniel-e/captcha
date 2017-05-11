@@ -3,12 +3,12 @@ use std::collections::HashMap;
 use base64::decode;
 
 pub trait Font {
-    fn png_as_base64(&self, letter: String) -> Option<&String>;
+    fn png_as_base64(&self, letter: char) -> Option<&String>;
 
-    fn chars(&self) -> Vec<String>;
+    fn chars(&self) -> Vec<char>;
 
     /// Returns None if letter does not exist or if letter could not decoded.
-    fn png(&self, letter: String) -> Option<Vec<u8>> {
+    fn png(&self, letter: char) -> Option<Vec<u8>> {
         match self.png_as_base64(letter) {
             None    => None,
             Some(s) => {
@@ -22,26 +22,25 @@ pub trait Font {
 }
 
 pub struct Default {
-    data: HashMap<String, String>
+    data: HashMap<char, String>
 }
 
 impl Default {
     pub fn new() -> Default {
         let json = include_str!("font_default.json").to_string();
-        let d: HashMap<String, String> = serde_json::from_str(&json).expect("invalid json");
 
         Default {
-            data: d
+            data: serde_json::from_str(&json).expect("invalid json")
         }
     }
 }
 
 impl Font for Default {
-    fn png_as_base64(&self, letter: String) -> Option<&String> {
+    fn png_as_base64(&self, letter: char) -> Option<&String> {
         self.data.get(&letter)
     }
 
-    fn chars(&self) -> Vec<String> {
+    fn chars(&self) -> Vec<char> {
         self.data.keys().cloned().collect()
     }
 }
@@ -56,8 +55,8 @@ mod tests {
         let f = Default::new();
 
         assert_eq!(f.chars().len(), 57);
-        assert!(f.png_as_base64("a".to_string()).is_some());
-        assert!(f.png("a".to_string()).is_some());
+        assert!(f.png_as_base64('a').is_some());
+        assert!(f.png('a').is_some());
         for i in f.chars() {
             assert!(Image::from_png(f.png(i).unwrap()).is_some());
         }

@@ -1,3 +1,5 @@
+//! Filters to disturb and transform CAPTCHAs.
+
 mod noise;
 mod grid;
 mod cow;

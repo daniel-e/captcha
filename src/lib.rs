@@ -9,23 +9,23 @@
 //! characters is randomly selected between 4 and 6 letters (inclusive).
 //!
 //! ```
-//! extern crate captcha;
-//! use captcha::samples::{self, Difficulty};
+//! # extern crate captcha;
+//! use captcha::{gen, Difficulty};
 //!
 //! # fn main() {
-//! let data = samples::gen(Difficulty::Easy).as_png();
+//! gen(Difficulty::Easy).as_png();
 //! # }
 //! ```
 //!
 //! To be more flexible you can build CAPTCHAs manually as well.
 //!
 //! ```
-//! extern crate captcha;
+//! # extern crate captcha;
 //! use captcha::Captcha;
 //! use captcha::filters::{Noise, Wave, Dots};
 //!
 //! # fn main() {
-//! let data = Captcha::new()
+//! Captcha::new()
 //!     .add_chars(5)
 //!     .apply_filter(Noise::new(0.4))
 //!     .apply_filter(Wave::new(2.0, 20.0).horizontal())
@@ -47,9 +47,11 @@ extern crate base64;
 extern crate lodepng;
 
 pub mod filters;
-pub mod samples;
+mod samples;
 mod images;
 mod fonts;
+
+pub use samples::{gen, Difficulty};
 
 use filters::Filter;
 use images::{Image, Pixl};
@@ -62,7 +64,7 @@ use std::cmp::{min, max};
 
 /// Represents the area which contains text in a CAPTCHA.
 #[derive(Clone, Debug)]
-pub struct TextArea {
+pub struct Geometry {
     /// The minimum x coordinate of the area which contains text (inclusive).
     pub left: u32,
     /// The maximum x coordinate of the area which contains text (inclusive).
@@ -77,7 +79,8 @@ pub struct TextArea {
 pub struct Captcha {
     img: Image,
     font: Box<Font>,
-    text_area: TextArea,
+    text_area: Geometry,
+    chars: Vec<char>
 }
 
 impl Captcha {
@@ -89,9 +92,8 @@ impl Captcha {
         Captcha {
             img      : Image::new(w, h),
             font     : Box::new(Default::new()),
-            text_area: TextArea {
-                left: w / 4, right: w / 4, top: h / 2, bottom: h / 2
-            }
+            text_area: Geometry { left: w / 4, right: w / 4, top: h / 2, bottom: h / 2 },
+            chars    : vec![]
         }
     }
 
@@ -121,14 +123,17 @@ impl Captcha {
     /// returned.
     pub fn save(&self, p: &Path) -> Result<()> { self.img.save(p) }
 
-    fn random_char_as_image(&self) -> Option<Image> {
+    fn random_char_as_image(&self) -> Option<(char, Image)> {
         let mut rng = thread_rng();
         match rng.choose(&self.font.chars()) {
             None    => None,
             Some(c) => {
                 match self.font.png(c.clone()) {
                     None    => None,
-                    Some(p) => Image::from_png(p)
+                    Some(p) => match Image::from_png(p) {
+                        None    => None,
+                        Some(i) => Some((c.clone(), i))
+                    }
                 }
             }
         }
@@ -137,7 +142,7 @@ impl Captcha {
     /// Adds a random character using the current font.
     pub fn add_char(&mut self) -> &mut Self {
         match self.random_char_as_image() {
-            Some(i) => {
+            Some((c, i)) => {
                 let x = self.text_area.right;
                 let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
                 self.img.add_image(x, y, &i);
@@ -145,6 +150,7 @@ impl Captcha {
                 self.text_area.top    = min(self.text_area.top, y);
                 self.text_area.right  = x + i.width() - 1;
                 self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
+                self.chars.push(c);
             },
             _ => { }
         }
@@ -167,12 +173,12 @@ impl Captcha {
     }
 
     /// Returns the geometry of the area which contains text in the CAPTCHA.
-    pub fn text_area(&self) -> TextArea {
+    pub fn text_area(&self) -> Geometry {
         self.text_area.clone()
     }
 
     /// Crops the CAPTCHA to the given geometry.
-    pub fn extract(&mut self, area: TextArea) -> &mut Self {
+    pub fn extract(&mut self, area: Geometry) -> &mut Self {
         // TODO rename the method
         // TODO adjust the text area
         let w = area.right - area.left + 1;
@@ -201,6 +207,11 @@ impl Captcha {
         self
     }
 
+    /// Returns the characters added to this CAPTCHA.
+    pub fn chars(&self) -> Vec<char> {
+        self.chars.clone()
+    }
+
     /// Adds the given number of random characters to the CAPTCHA using the current font.
     pub fn add_chars(&mut self, n: u32) -> &mut Self {
         for _ in 0..n {
@@ -224,8 +235,6 @@ mod tests {
     use fonts::Default;
 
     use std::path::Path;
-    use std::fs::File;
-    use std::io::Write;
 
     #[test]
     fn it_works() {
@@ -237,18 +246,9 @@ mod tests {
             .apply_filter(Noise::new(0.1))
             .apply_filter(Grid::new(20, 10))
             .add_text_area();
-            //.apply_filter(Cow::new().min_radius(5).max_radius(20))
-            //.apply_filter(Dots::new(40))
-            //.apply_filter(Wave::new(2.0, 30.0).direction(Direction::VERTICAL))
-            //.apply_filter(Wave::new(2.0, 20.0).direction(Direction::HORIZONTAL))
+
         let a = c.text_area();
-        c.extract(a)
-            .save(Path::new("/tmp/a.png"))
-            .expect("save failed");
-
-        let data = c.as_png().expect("no png");
-        let mut f = File::create(Path::new("/tmp/b.png")).expect("err");
-        f.write(&data);
-
+        c.extract(a).save(Path::new("/tmp/captcha.png")).expect("save failed");
+        c.as_png().expect("no png");
     }
 }

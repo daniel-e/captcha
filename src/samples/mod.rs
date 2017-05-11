@@ -1,4 +1,18 @@
 //! Convinient module to create CAPTCHAs.
+//!
+//! If you are looking for a more flexible approach to create CAPTCHAs please have a look
+//! at [`Captcha`](../struct.Captcha.html).
+//!
+//! # Examples
+//!
+//! ```
+//! # extern crate captcha;
+//! use captcha::{gen, Difficulty};
+//!
+//! # fn main() {
+//! gen(Difficulty::Easy).as_png();
+//! # }
+//! ```
 use rand::{Rng, thread_rng};
 use Captcha;
 use filters::{Noise, Grid, Dots, Wave};
@@ -13,7 +27,12 @@ pub enum Difficulty {
     Hard
 }
 
-/// Creates a random CAPTCHA of the given difficulty.
+/// Creates a random CAPTCHA with the given difficulty.
+///
+/// The resulting CAPTCHA has a size of 220x120 pixels and contains between 4 and 6
+/// character (including).
+///
+/// If you need more flexibility please have a look at [`Captcha`](../struct.Captcha.html).
 pub fn gen(d: Difficulty) -> Captcha {
     match d {
         Difficulty::Easy   => easy(),

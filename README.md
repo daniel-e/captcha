@@ -4,8 +4,13 @@ A library to generate CAPTCHAs like these:
 
 ![captcha](doc/captcha3.png) &nbsp; ![captcha](doc/captcha2.png)
 
-## Requirements
-* Rust
+### Requirements
+
+Rust (https://www.rust-lang.org/)
+
+### Documentation
+
+https://docs.rs/captcha
 
 ## Usage
 
