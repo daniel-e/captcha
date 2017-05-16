@@ -34,7 +34,8 @@ pub enum CaptchaName {
     Mila,
 }
 
-const N: u32 = 3; // TODO more automatic: extending names is error prone
+static CAPTCHA_FUNCTIONS: &'static [fn(Difficulty) -> Captcha] =
+    &[captcha_amelia, captcha_lucy, captcha_mila];
 
 /// Creates a random CAPTCHA with the given difficulty.
 ///
@@ -43,11 +44,8 @@ const N: u32 = 3; // TODO more automatic: extending names is error prone
 ///
 /// If you need more flexibility please have a look at [`Captcha`](../struct.Captcha.html).
 pub fn gen(d: Difficulty) -> Captcha {
-    match thread_rng().gen::<u32>() % N {
-        0 => by_name(d, CaptchaName::Lucy),
-        1 => by_name(d, CaptchaName::Mila),
-        _ => by_name(d, CaptchaName::Amelia)
-    }
+    let n = thread_rng().gen::<usize>() % CAPTCHA_FUNCTIONS.len();
+    CAPTCHA_FUNCTIONS[n](d)
 }
 
 // TODO document easy/medium/hard
@@ -56,20 +54,62 @@ pub fn gen(d: Difficulty) -> Captcha {
 ///
 /// The CAPTCHAs look similar to the following ones:
 ///
-/// ## Amelia
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_easy.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_medium.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_hard.png">
+/// <div style="display: table">
+/// <div style="display: table-row; background-color: #dddddd">
+///   <div style="display: table-cell; text-align: center; padding: 10px;">Name</div>
+///   <div style="display: table-cell; text-align: center; padding: 10px;">Easy</div>
+///   <div style="display: table-cell; text-align: center; padding: 10px;">Medium</div>
+///   <div style="display: table-cell; text-align: center; padding: 10px;">Hard</div>
+/// </div>
 ///
-/// ## Lucy
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_easy.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_medium.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_hard.png">
+/// <div style="display: table-row;">
+///   <div style="display: table-cell; vertical-align: top; padding: 3px;"></div>
+///   <div style="display: table-cell; vertical-align: top; padding: 3px;"></div>
+///   <div style="display: table-cell; vertical-align: top; padding: 3px;"></div>
+///   <div style="display: table-cell; vertical-align: top; padding: 3px;"></div>
+/// </div>
 ///
-/// ## Mila
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_easy.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_medium.png"> &nbsp;
-/// <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_hard.png">
+/// <div style="display: table-row;">
+///   <div style="display: table-cell; vertical-align: top; padding-left: 3px;">Amelia</div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_easy.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_medium.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_amelia_hard.png">
+///   </div>
+/// </div>
+///
+/// <div style="display: table-row;">
+///   <div style="display: table-cell; vertical-align: top; padding-left: 3px;">Lucy</div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_easy.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_medium.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_lucy_hard.png">
+///   </div>
+/// </div>
+///
+/// <div style="display: table-row;">
+///   <div style="display: table-cell; vertical-align: top; padding-left: 3px;">Mila</div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_easy.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_medium.png">
+///   </div>
+///   <div style="display: table-cell; padding-left: 3px;">
+///     <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_hard.png">
+///   </div>
+/// </div>
+///
+/// </div>
+///
 pub fn by_name(d: Difficulty, t: CaptchaName) -> Captcha {
     match t {
         CaptchaName::Amelia => captcha_amelia(d),
@@ -81,8 +121,7 @@ pub fn by_name(d: Difficulty, t: CaptchaName) -> Captcha {
 // -------------------------------------------
 
 fn rnd() -> u32 {
-    let mut rng = thread_rng();
-    rng.gen_range(4, 7)
+    thread_rng().gen_range(4, 7)
 }
 
 fn captcha_amelia(d: Difficulty) -> Captcha {

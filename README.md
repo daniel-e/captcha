@@ -2,7 +2,7 @@
 
 A library to generate CAPTCHAs like these:
 
-![captcha](doc/captcha3.png) &nbsp; ![captcha](doc/captcha2.png)
+![captcha](doc/captcha3.png) &nbsp; ![captcha](doc/captcha2.png) &nbsp; ![captcha](doc/captcha_mila_medium.png)
 
 ### Requirements
 

@@ -36,6 +36,8 @@ impl Wave {
     }
 }
 
+// TODO randomize offset
+
 impl Filter for Wave {
     fn apply(&self, i: &mut Image) {
         let o = i.clone();

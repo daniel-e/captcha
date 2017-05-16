@@ -1,12 +1,17 @@
 //! Crate to generate CAPTCHAs.
 //!
+//! # Examples
+//!
 //! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha3.png"> &nbsp;
-//! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha2.png">
+//! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha2.png"> &nbsp;
+//! <img src="https://github.com/daniel-e/captcha/raw/master/doc/captcha_mila_medium.png">
 //!
 //! For a more detailed list of predefined CAPTCHAS please have a look at [`by_name`](fn.by_name.html).
 //!
+//! # Create CAPTCHAs
+//!
 //! The crate offers two ways to create CAPTCHAs. The first way is the most easiest one. Just one
-//! line of code is necessary to create a random CAPTCHA in of a given category. The category can be
+//! line of code is necessary to create a random CAPTCHA of a given category. The category can be
 //! either `Easy`, `Medium` or `Hard`. The size of the CAPTCHA is 220x120 pixels and the number of
 //! characters is randomly selected between 4 and 6 letters (inclusive).
 //!
@@ -85,7 +90,7 @@ impl Geometry {
     }
 }
 
-/// Used to build a CAPTCHA step by step.
+/// A CAPTCHA.
 pub struct Captcha {
     img: Image,
     font: Box<Font>,
@@ -217,9 +222,14 @@ impl Captcha {
         self
     }
 
-    /// Returns the characters added to this CAPTCHA.
+    /// Returns the characters that have been added to this CAPTCHA.
     pub fn chars(&self) -> Vec<char> {
         self.chars.clone()
+    }
+
+    /// Returns the characters that have been added to this CAPTCHA collected into a string.
+    pub fn chars_as_string(&self) -> String {
+        self.chars.iter().collect()
     }
 
     /// Adds the given number of random characters to the CAPTCHA using the current font.
@@ -235,6 +245,17 @@ impl Captcha {
     /// Returns `None` on error.
     pub fn as_png(&self) -> Option<Vec<u8>> {
         self.img.as_png()
+    }
+
+    /// Returns a tuple which contains the characters that have been added to this CAPTCHA
+    /// as a string and the image encoded as a PNG.
+    ///
+    /// Returns `None` on error.
+    pub fn as_tuple(&self) -> Option<(String, Vec<u8>)> {
+        match self.as_png() {
+            None    => None,
+            Some(p) => Some((self.chars_as_string(), p))
+        }
     }
 }
 
