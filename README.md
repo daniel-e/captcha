@@ -1,4 +1,5 @@
 # CAPTCHA library written in Rust
+[![Build Status](https://travis-ci.org/daniel-e/captcha.svg?branch=master)](https://travis-ci.org/daniel-e/captcha)
 
 A library to generate CAPTCHAs like these:
 
