@@ -204,11 +204,11 @@ impl Captcha {
     pub fn extract(&mut self, area: Geometry) -> &mut Self {
         // TODO rename the method
         // TODO adjust the text area
-        let w = area.right - area.left + 1;
-        let h = area.bottom - area.top + 1;
+        let w = area.right - area.left;
+        let h = area.bottom - area.top;
         let mut i = Image::new(w, h);
-        for (y, iy) in (area.top..area.bottom + 1).zip(0..h + 1) {
-            for (x, ix) in (area.left..area.right + 1).zip(0..w + 1) {
+        for (y, iy) in (area.top..area.bottom).zip(0..h + 1) {
+            for (x, ix) in (area.left..area.right).zip(0..w + 1) {
                 i.put_pixel(ix, iy, self.img.get_pixel(x, y));
             }
         }
@@ -291,5 +291,13 @@ mod tests {
             .save(Path::new("/tmp/captcha.png"))
             .expect("save failed");
         c.as_png().expect("no png");
+    }
+
+    #[test]
+    fn image_size() {
+        let mut c = Captcha::new();
+        c.view(8, 16);
+        assert_eq!(&c.img.width(), &8);
+        assert_eq!(&c.img.height(), &16);
     }
 }
