@@ -96,7 +96,7 @@ impl Geometry {
 /// A CAPTCHA.
 pub struct Captcha {
     img: Image,
-    font: Box<Font>,
+    font: Box<dyn Font>,
     text_area: Geometry,
     chars: Vec<char>,
 }
