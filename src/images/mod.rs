@@ -1,14 +1,14 @@
+use std::cmp::{max, min};
 use std::io::Result;
-use std::path::Path;
-use std::cmp::{min, max};
 use std::iter::FromIterator;
+use std::path::Path;
 
-use image::{RgbImage, ImageBuffer, Rgb, load_from_memory};
+use image::{load_from_memory, ImageBuffer, Rgb, RgbImage};
 use lodepng;
 
 #[derive(Clone, Copy)]
 pub struct Pixl {
-    rgb: [u8; 3]
+    rgb: [u8; 3],
 }
 
 #[derive(Clone)]
@@ -18,9 +18,7 @@ pub struct Image {
 
 impl Pixl {
     pub fn new(r: u8, g: u8, b: u8) -> Pixl {
-        Pixl {
-            rgb: [r, g, b]
-        }
+        Pixl { rgb: [r, g, b] }
     }
 
     pub fn black() -> Pixl {
@@ -39,22 +37,20 @@ impl Pixl {
 }
 
 impl Image {
-    fn pixel_white() -> Rgb<u8> { Rgb::<u8>([255, 255, 255]) }
+    fn pixel_white() -> Rgb<u8> {
+        Rgb::<u8>([255, 255, 255])
+    }
 
     pub fn from_png(v: Vec<u8>) -> Option<Image> {
         match load_from_memory(&v) {
             Err(_) => None,
-            Ok(i)  => {
-                Some(Image {
-                    img: i.to_rgb()
-                })
-            }
+            Ok(i) => Some(Image { img: i.to_rgb() }),
         }
     }
 
     pub fn new(w: u32, h: u32) -> Image {
         Image {
-            img: ImageBuffer::from_pixel(w, h, Self::pixel_white())
+            img: ImageBuffer::from_pixel(w, h, Self::pixel_white()),
         }
     }
 
@@ -117,9 +113,7 @@ impl Image {
         let i = self.img.clone().into_raw();
         match lodepng::encode_memory(&i, w, h, lodepng::ColorType::LCT_RGB, 8) {
             Err(_) => None,
-            Ok(v)  => {
-                Some(Vec::from_iter(v.as_ref().iter().cloned()))
-            }
+            Ok(v) => Some(Vec::from_iter(v.as_ref().iter().cloned())),
         }
     }
 }

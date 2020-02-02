@@ -1,9 +1,9 @@
 use rand::{thread_rng, Rng};
-use std::cmp::{min, max};
+use std::cmp::{max, min};
 use std::collections::BTreeSet;
 
-use images::Image;
 use filters::Filter;
+use images::Image;
 use Geometry;
 
 pub struct Cow {
@@ -11,7 +11,7 @@ pub struct Cow {
     max_radius: u32,
     n: u32,
     allow_duplicates: bool,
-    geometry: Option<Geometry>
+    geometry: Option<Geometry>,
 }
 
 impl Cow {
@@ -21,25 +21,34 @@ impl Cow {
             max_radius: 20,
             n: 3,
             allow_duplicates: true,
-            geometry: None
+            geometry: None,
         }
     }
 
     pub fn circles(self, n: u32) -> Self {
-        Cow { n: n, .. self }
+        Cow { n: n, ..self }
     }
 
     pub fn min_radius(self, min_radius: u32) -> Self {
-        Cow { min_radius: min_radius, .. self }
+        Cow {
+            min_radius: min_radius,
+            ..self
+        }
     }
 
     pub fn max_radius(self, max_radius: u32) -> Self {
-        Cow { max_radius: max_radius, .. self }
+        Cow {
+            max_radius: max_radius,
+            ..self
+        }
     }
 
     // right + bottom = inclusive
     pub fn area(self, g: Geometry) -> Self {
-        Cow { geometry: Some(g), .. self }
+        Cow {
+            geometry: Some(g),
+            ..self
+        }
     }
 
     fn get_pixels(x: i32, y: i32, r: i32, i: &mut Image) -> Vec<(u32, u32)> {
@@ -76,14 +85,20 @@ impl Filter for Cow {
 
         let g = match self.geometry {
             Some(ref x) => x.clone(),
-            None        => Geometry::new(0, i.width() - 1, 0, i.height() - 1),
+            None => Geometry::new(0, i.width() - 1, 0, i.height() - 1),
         };
 
-        let mut pixels = vec![(rng.gen_range(g.left, g.right + 1), rng.gen_range(g.top, g.bottom + 1))];
+        let mut pixels = vec![(
+            rng.gen_range(g.left, g.right + 1),
+            rng.gen_range(g.top, g.bottom + 1),
+        )];
         let mut set = BTreeSet::new();
 
         for _ in 0..self.n {
-            let p = thread_rng().choose_mut(&mut pixels).expect("failed").clone();
+            let p = thread_rng()
+                .choose_mut(&mut pixels)
+                .expect("failed")
+                .clone();
 
             let r = rng.gen_range(self.min_radius, self.max_radius + 1) as i32;
             let v = Self::get_pixels(p.0 as i32, p.1 as i32, r, i);
