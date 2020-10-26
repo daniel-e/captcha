@@ -1,4 +1,4 @@
-use rand::{thread_rng, Rng};
+use rand::prelude::*;
 use std::cmp::{max, min};
 use std::collections::BTreeSet;
 
@@ -95,10 +95,8 @@ impl Filter for Cow {
         let mut set = BTreeSet::new();
 
         for _ in 0..self.n {
-            let p = thread_rng()
-                .choose_mut(&mut pixels)
-                .expect("failed")
-                .clone();
+            let mut rng = thread_rng();
+            let p = pixels.choose(&mut rng).expect("failed").clone();
 
             let r = rng.gen_range(self.min_radius, self.max_radius + 1) as i32;
             let v = Self::get_pixels(p.0 as i32, p.1 as i32, r, i);
