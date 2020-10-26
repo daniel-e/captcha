@@ -14,7 +14,7 @@ repository = "https://github.com/daniel-e/captcha"
 [dependencies]
 image = "0.23"
 rand = "0.3.15"
-serde_json = "1.0.2"
+serde_json = "1.0"
 base64 = "0.13"
 lodepng = "1.1.0"
 time = "0.1.37"
