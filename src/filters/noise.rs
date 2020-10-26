@@ -1,17 +1,15 @@
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 
-use images::{Image, Pixl};
 use filters::Filter;
+use images::{Image, Pixl};
 
 pub struct Noise {
-    prob: f32
+    prob: f32,
 }
 
 impl Noise {
     pub fn new(prob: f32) -> Noise {
-        Noise {
-            prob: prob
-        }
+        Noise { prob: prob }
     }
 }
 

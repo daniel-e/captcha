@@ -47,27 +47,27 @@
 // TODO resize characters
 // TODO overlap characters
 
+extern crate base64;
 extern crate image;
+extern crate lodepng;
 extern crate rand;
 extern crate serde_json;
-extern crate base64;
-extern crate lodepng;
 
 pub mod filters;
-mod samples;
-mod images;
 mod fonts;
+mod images;
+mod samples;
 
-pub use samples::{gen, by_name, Difficulty, CaptchaName};
+pub use samples::{by_name, gen, CaptchaName, Difficulty};
 
 use filters::Filter;
-use images::{Image, Pixl};
 use fonts::{Default, Font};
+use images::{Image, Pixl};
 
-use std::path::Path;
 use image::ImageResult as Result;
 use rand::{thread_rng, Rng};
-use std::cmp::{min, max};
+use std::cmp::{max, min};
+use std::path::Path;
 
 /// Represents the area which contains text in a CAPTCHA.
 #[derive(Clone, Debug)]
@@ -79,13 +79,16 @@ pub struct Geometry {
     /// The minimum y coordinate of the area which contains text (inclusive).
     pub top: u32,
     /// The maximum y coordinate of the area which contains text (inclusive).
-    pub bottom: u32
+    pub bottom: u32,
 }
 
 impl Geometry {
     pub fn new(left: u32, right: u32, top: u32, bottom: u32) -> Geometry {
         Geometry {
-            left: left, right: right, top: top, bottom: bottom
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
         }
     }
 }
@@ -95,7 +98,7 @@ pub struct Captcha {
     img: Image,
     font: Box<dyn Font>,
     text_area: Geometry,
-    chars: Vec<char>
+    chars: Vec<char>,
 }
 
 impl Captcha {
@@ -105,10 +108,15 @@ impl Captcha {
         let w = 400;
         let h = 300;
         Captcha {
-            img      : Image::new(w, h),
-            font     : Box::new(Default::new()),
-            text_area: Geometry { left: w / 4, right: w / 4, top: h / 2, bottom: h / 2 },
-            chars    : vec![]
+            img: Image::new(w, h),
+            font: Box::new(Default::new()),
+            text_area: Geometry {
+                left: w / 4,
+                right: w / 4,
+                top: h / 2,
+                bottom: h / 2,
+            },
+            chars: vec![],
         }
     }
 
@@ -136,21 +144,21 @@ impl Captcha {
     ///
     /// The format that is written is determined from the filename's extension. On error `Err` is
     /// returned.
-    pub fn save(&self, p: &Path) -> Result<()> { self.img.save(p) }
+    pub fn save(&self, p: &Path) -> Result<()> {
+        self.img.save(p)
+    }
 
     fn random_char_as_image(&self) -> Option<(char, Image)> {
         let mut rng = thread_rng();
         match rng.choose(&self.font.chars()) {
-            None    => None,
-            Some(c) => {
-                match self.font.png(c.clone()) {
-                    None    => None,
-                    Some(p) => match Image::from_png(p) {
-                        None    => None,
-                        Some(i) => Some((c.clone(), i))
-                    }
-                }
-            }
+            None => None,
+            Some(c) => match self.font.png(c.clone()) {
+                None => None,
+                Some(p) => match Image::from_png(p) {
+                    None => None,
+                    Some(i) => Some((c.clone(), i)),
+                },
+            },
         }
     }
 
@@ -162,12 +170,12 @@ impl Captcha {
                 let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
                 self.img.add_image(x, y, &i);
 
-                self.text_area.top    = min(self.text_area.top, y);
-                self.text_area.right  = x + i.width() - 1;
+                self.text_area.top = min(self.text_area.top, y);
+                self.text_area.right = x + i.width() - 1;
                 self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
                 self.chars.push(c);
-            },
-            _ => { }
+            }
+            _ => {}
         }
 
         self
@@ -212,9 +220,9 @@ impl Captcha {
     /// box.
     pub fn view(&mut self, w: u32, h: u32) -> &mut Self {
         let mut a = self.text_area();
-        a.left   = (a.right + a.left) / 2 - w / 2;
-        a.right  = a.left + w;
-        a.top    = (a.bottom + a.top) / 2 - h / 2;
+        a.left = (a.right + a.left) / 2 - w / 2;
+        a.right = a.left + w;
+        a.top = (a.bottom + a.top) / 2 - h / 2;
         a.bottom = a.top + h;
         self.extract(a);
         // TODO update text area
@@ -253,17 +261,17 @@ impl Captcha {
     /// Returns `None` on error.
     pub fn as_tuple(&self) -> Option<(String, Vec<u8>)> {
         match self.as_png() {
-            None    => None,
-            Some(p) => Some((self.chars_as_string(), p))
+            None => None,
+            Some(p) => Some((self.chars_as_string(), p)),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use Captcha;
-    use filters::{Noise, Grid};
+    use filters::{Grid, Noise};
     use fonts::Default;
+    use Captcha;
 
     use std::path::Path;
 
@@ -279,7 +287,9 @@ mod tests {
             .add_text_area();
 
         let a = c.text_area();
-        c.extract(a).save(Path::new("/tmp/captcha.png")).expect("save failed");
+        c.extract(a)
+            .save(Path::new("/tmp/captcha.png"))
+            .expect("save failed");
         c.as_png().expect("no png");
     }
 }

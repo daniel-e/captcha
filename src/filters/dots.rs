@@ -1,7 +1,7 @@
 use rand::{thread_rng, Rng};
 
-use images::{Image, Pixl};
 use filters::Filter;
+use images::{Image, Pixl};
 
 pub struct Dots {
     n: u32,
@@ -14,16 +14,22 @@ impl Dots {
         Dots {
             n: n,
             min_radius: 5,
-            max_radius: 10
+            max_radius: 10,
         }
     }
 
     pub fn min_radius(self, r: u32) -> Dots {
-        Dots { min_radius: r, .. self }
+        Dots {
+            min_radius: r,
+            ..self
+        }
     }
 
     pub fn max_radius(self, r: u32) -> Dots {
-        Dots { max_radius: r, .. self }
+        Dots {
+            max_radius: r,
+            ..self
+        }
     }
 }
 
