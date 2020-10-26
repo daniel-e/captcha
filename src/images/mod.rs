@@ -1,4 +1,4 @@
-use std::io::Result;
+use image::ImageResult as Result;
 use std::path::Path;
 use std::cmp::{min, max};
 use std::iter::FromIterator;
@@ -67,7 +67,7 @@ impl Image {
     pub fn get_pixel(&self, x: u32, y: u32) -> Pixl {
         let p = self.img.get_pixel(x, y).clone();
         Pixl {
-            rgb: [p.data[0], p.data[1], p.data[2]],
+            rgb: [p[0], p[1], p[2]],
         }
     }
 

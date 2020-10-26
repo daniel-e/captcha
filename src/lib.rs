@@ -65,7 +65,7 @@ use images::{Image, Pixl};
 use fonts::{Default, Font};
 
 use std::path::Path;
-use std::io::Result;
+use image::ImageResult as Result;
 use rand::{thread_rng, Rng};
 use std::cmp::{min, max};
 
