@@ -101,6 +101,7 @@ pub struct Captcha {
     text_area: Geometry,
     chars: Vec<char>,
     use_font_chars: Vec<char>,
+    color: Option<[u8; 3]>,
 }
 
 impl Captcha {
@@ -121,6 +122,7 @@ impl Captcha {
                 bottom: h / 2,
             },
             chars: vec![],
+            color: None,
         }
     }
 
@@ -147,12 +149,18 @@ impl Captcha {
         // TODO support other fonts
     }
 
+    pub fn set_color(&mut self, color: [u8; 3]) -> &mut Self {
+        self.color = Some(color);
+        self
+    }
+
     /// Saves the CAPTCHA to a image file.
     ///
     /// The format that is written is determined from the filename's extension. On error `Err` is
     /// returned.
     pub fn save(&self, p: &Path) -> Result<()> {
-        self.img.save(p)
+        let i = self.apply_transformations();
+        i.save(p)
     }
 
     /// Sets the characters that should be used when generating a CAPTCHA.
@@ -264,11 +272,22 @@ impl Captcha {
         self
     }
 
+    fn apply_transformations(&self) -> Image {
+        let mut i = self.img.clone();
+        if self.color.is_some() {
+            i.set_color(&self.color.unwrap());
+        }
+        i
+    }
+
     /// Returns the CAPTCHA as a png image.
     ///
     /// Returns `None` on error.
     pub fn as_png(&self) -> Option<Vec<u8>> {
-        self.img.as_png()
+        // TODO currently we always create a copy. For most use cases this might not be
+        // necessary.
+        let i = self.apply_transformations();
+        i.as_png()
     }
 
     pub fn as_base64(&self) -> Option<String> {

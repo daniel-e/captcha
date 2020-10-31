@@ -53,6 +53,19 @@ impl Image {
         }
     }
 
+    pub fn set_color(&mut self, color: &[u8; 3]) {
+        // TODO: optimize
+        for y in 0..self.img.height() {
+            for x in 0..self.img.width() {
+                let c = self.img.get_pixel(x, y).clone();
+                if c[0] == 0 { // if red channel is 0 we assume it's a black pixel
+                    let rgb = Rgb::<u8>(color.clone());
+                    self.img.put_pixel(x, y, rgb);
+                }
+            }
+        }
+    }
+
     pub fn put_pixel(&mut self, x: u32, y: u32, p: Pixl) {
         if x < self.img.width() && y < self.img.height() {
             self.img.put_pixel(x, y, Rgb::<u8>(p.rgb));

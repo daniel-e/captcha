@@ -19,7 +19,8 @@ fn main() {
                 .max_radius(50)
                 .circles(1)
                 .area(Geometry::new(40, 150, 50, 70)),
-        );
+        )
+        .set_color([255, 128, 0]);
     c.save(Path::new("captcha.png"))
         .expect("save failed");
 
