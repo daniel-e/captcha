@@ -2,8 +2,8 @@ extern crate captcha;
 extern crate time;
 
 use captcha::{gen, Difficulty};
-use time::PreciseTime;
 use std::thread;
+use time::PreciseTime;
 
 fn main() {
     let n = 500;

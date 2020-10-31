@@ -1,6 +1,6 @@
+use base64::decode;
 use serde_json;
 use std::collections::HashMap;
-use base64::decode;
 
 pub trait Font {
     fn png_as_base64(&self, letter: char) -> Option<&String>;
@@ -10,19 +10,17 @@ pub trait Font {
     /// Returns None if letter does not exist or if letter could not decoded.
     fn png(&self, letter: char) -> Option<Vec<u8>> {
         match self.png_as_base64(letter) {
-            None    => None,
-            Some(s) => {
-                match decode(s) {
-                    Err(_) => None,
-                    Ok(v)  => Some(v)
-                }
-            }
+            None => None,
+            Some(s) => match decode(s) {
+                Err(_) => None,
+                Ok(v) => Some(v),
+            },
         }
     }
 }
 
 pub struct Default {
-    data: HashMap<char, String>
+    data: HashMap<char, String>,
 }
 
 impl Default {
@@ -30,7 +28,7 @@ impl Default {
         let json = include_str!("font_default.json").to_string();
 
         Default {
-            data: serde_json::from_str(&json).expect("invalid json")
+            data: serde_json::from_str(&json).expect("invalid json"),
         }
     }
 }
@@ -47,8 +45,8 @@ impl Font for Default {
 
 #[cfg(test)]
 mod tests {
-    use images::Image;
     use fonts::{Default, Font};
+    use images::Image;
 
     #[test]
     fn fonts_default() {
