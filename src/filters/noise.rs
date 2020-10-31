@@ -18,7 +18,7 @@ impl Filter for Noise {
         let mut rng = thread_rng();
         for y in 0..i.height() {
             for x in 0..i.width() {
-                if rng.next_f32() <= self.prob {
+                if rng.gen::<f32>() <= self.prob {
                     i.put_pixel(x, y, Pixl::black());
                 }
             }

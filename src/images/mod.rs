@@ -1,6 +1,5 @@
+use image::ImageResult as Result;
 use std::cmp::{max, min};
-use std::io::Result;
-use std::iter::FromIterator;
 use std::path::Path;
 
 use image::{load_from_memory, ImageBuffer, Rgb, RgbImage};
@@ -63,7 +62,7 @@ impl Image {
     pub fn get_pixel(&self, x: u32, y: u32) -> Pixl {
         let p = self.img.get_pixel(x, y).clone();
         Pixl {
-            rgb: [p.data[0], p.data[1], p.data[2]],
+            rgb: [p[0], p[1], p[2]],
         }
     }
 
@@ -111,9 +110,9 @@ impl Image {
         let w = self.img.width() as usize;
         let h = self.img.height() as usize;
         let i = self.img.clone().into_raw();
-        match lodepng::encode_memory(&i, w, h, lodepng::ColorType::LCT_RGB, 8) {
+        match lodepng::encode_memory(&i, w, h, lodepng::ColorType::RGB, 8) {
             Err(_) => None,
-            Ok(v) => Some(Vec::from_iter(v.as_ref().iter().cloned())),
+            Ok(v) => Some(v),
         }
     }
 }
