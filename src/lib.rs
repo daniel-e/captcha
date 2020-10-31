@@ -256,6 +256,13 @@ impl Captcha {
         self.img.as_png()
     }
 
+    pub fn as_base64(&self) -> Option<String> {
+        match self.as_png() {
+            Some(vec) => Some(base64::encode(vec)),
+            None => None
+        }
+    }
+
     /// Returns a tuple which contains the characters that have been added to this CAPTCHA
     /// as a string and the image encoded as a PNG.
     ///
