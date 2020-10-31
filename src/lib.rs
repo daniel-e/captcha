@@ -100,6 +100,7 @@ pub struct Captcha {
     font: Box<dyn Font>,
     text_area: Geometry,
     chars: Vec<char>,
+    use_font_chars: Vec<char>,
 }
 
 impl Captcha {
@@ -108,9 +109,11 @@ impl Captcha {
         // TODO fixed width + height
         let w = 400;
         let h = 300;
+        let f = Box::new(Default::new());
         Captcha {
+            use_font_chars: f.chars(),
             img: Image::new(w, h),
-            font: Box::new(Default::new()),
+            font: f,
             text_area: Geometry {
                 left: w / 4,
                 right: w / 4,
@@ -135,8 +138,11 @@ impl Captcha {
     /// Calling this method does not have an effect on the font of the characters which have already
     /// been added to the CAPTCHA. The new font is only applied to the characters which are written
     /// to the CAPTCHA after this method is called.
+    ///
+    /// If characters have been set via set_chars(), this method will overwrite the setting.
     pub fn set_font<F: Font + 'static>(&mut self, f: F) -> &mut Self {
         self.font = Box::new(f);
+        self.use_font_chars = self.font.chars();
         self
         // TODO support other fonts
     }
@@ -149,9 +155,18 @@ impl Captcha {
         self.img.save(p)
     }
 
+    /// Sets the characters that should be used when generating a CAPTCHA.
+    ///
+    /// Important: The characters have to exist for the current font. You can get all characters
+    /// which are supported by the current font by calling supported_chars().
+    pub fn set_chars(&mut self, c: &Vec<char>) -> &mut Self {
+        self.use_font_chars = c.clone();
+        self
+    }
+
     fn random_char_as_image(&self) -> Option<(char, Image)> {
         let mut rng = thread_rng();
-        match self.font.chars().choose(&mut rng) {
+        match self.use_font_chars.choose(&mut rng) {
             None => None,
             Some(c) => match self.font.png(c.clone()) {
                 None => None,
@@ -272,6 +287,11 @@ impl Captcha {
             None => None,
             Some(p) => Some((self.chars_as_string(), p)),
         }
+    }
+
+    /// Returns the supported characters of the current font.
+    pub fn supported_chars(&self) -> Vec<char> {
+        self.font.chars()
     }
 }
 
