@@ -2,3 +2,5 @@ Cargo.lock
 target
 *.iml
 .idea
+*.wav
+*.png
