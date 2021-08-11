@@ -43,7 +43,7 @@ impl Image {
     pub fn from_png(v: Vec<u8>) -> Option<Image> {
         match load_from_memory(&v) {
             Err(_) => None,
-            Ok(i) => Some(Image { img: i.to_rgb() }),
+            Ok(i) => Some(Image { img: i.to_rgb8() }),
         }
     }
 
@@ -58,7 +58,8 @@ impl Image {
         for y in 0..self.img.height() {
             for x in 0..self.img.width() {
                 let c = self.img.get_pixel(x, y).clone();
-                if c[0] == 0 { // if red channel is 0 we assume it's a black pixel
+                if c[0] == 0 {
+                    // if red channel is 0 we assume it's a black pixel
                     let rgb = Rgb::<u8>(color.clone());
                     self.img.put_pixel(x, y, rgb);
                 }
