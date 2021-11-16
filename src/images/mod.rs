@@ -43,7 +43,7 @@ impl Image {
     pub fn from_png(v: Vec<u8>) -> Option<Image> {
         match load_from_memory(&v) {
             Err(_) => None,
-            Ok(i) => Some(Image { img: i.to_rgb() }),
+            Ok(i) => Some(Image { img: i.to_rgb8() }),
         }
     }
 
