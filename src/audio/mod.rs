@@ -1,15 +1,17 @@
 use base64::decode;
-#[cfg(feature = "hound")]
+#[cfg(feature = "audio")]
 use hound::Result;
 use rand::{thread_rng, Rng};
 use serde_json;
 use std::collections::HashMap;
 use std::io::Cursor;
 
+#[cfg(feature = "audio")]
 pub struct Audio {
     data: HashMap<char, String>,
 }
 
+#[cfg(feature = "audio")]
 impl Audio {
     pub fn new() -> Audio {
         let json = include_str!("audio.json").to_string();
@@ -67,6 +69,7 @@ impl Audio {
     }
 }
 
+#[cfg(feature = "audio")]
 #[cfg(test)]
 mod tests {
     use audio::Audio;

@@ -4,6 +4,9 @@ use captcha::{gen, Difficulty};
 use std::fs::File;
 use std::io::prelude::*;
 
+#[cfg(not(feature = "audio"))]
+compile_error!("audio feature not enabled");
+
 fn main() -> std::io::Result<()> {
     let captcha = gen(Difficulty::Easy);
     let s = captcha.as_wav();

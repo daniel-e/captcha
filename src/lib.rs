@@ -48,6 +48,7 @@
 // TODO overlap characters
 
 extern crate base64;
+#[cfg(feature = "audio")]
 extern crate hound;
 extern crate image;
 extern crate lodepng;
@@ -66,6 +67,7 @@ use filters::Filter;
 use fonts::{Default, Font};
 use images::{Image, Pixl};
 
+#[cfg(feature = "audio")]
 use audio::Audio;
 use image::ImageResult as Result;
 use rand::prelude::*;
@@ -282,6 +284,7 @@ impl Captcha {
     /// Warning: Currently this feature is rather limited. The same audio data is returned
     /// for the same letter, i.e. no noise is added. Someone could solve the CAPTCHA by
     /// simply having the audio for each letter and comparing them with the current challenge.
+    #[cfg(feature = "hound")]
     pub fn as_wav(&self) -> Vec<Option<Vec<u8>>> {
         let audio = Audio::new();
         self.chars().iter().map(|x| audio.as_wav(*x)).collect()
