@@ -1,4 +1,5 @@
 use base64::decode;
+#[cfg(feature = "hound")]
 use hound::Result;
 use rand::{thread_rng, Rng};
 use serde_json;
