@@ -57,10 +57,10 @@ impl Image {
         // TODO: optimize
         for y in 0..self.img.height() {
             for x in 0..self.img.width() {
-                let c = self.img.get_pixel(x, y).clone();
+                let c = *self.img.get_pixel(x, y);
                 if c[0] == 0 {
                     // if red channel is 0 we assume it's a black pixel
-                    let rgb = Rgb::<u8>(color.clone());
+                    let rgb = Rgb::<u8>(*color);
                     self.img.put_pixel(x, y, rgb);
                 }
             }
@@ -74,7 +74,7 @@ impl Image {
     }
 
     pub fn get_pixel(&self, x: u32, y: u32) -> Pixl {
-        let p = self.img.get_pixel(x, y).clone();
+        let p = *self.img.get_pixel(x, y);
         Pixl {
             rgb: [p[0], p[1], p[2]],
         }

@@ -48,17 +48,17 @@
 // TODO overlap characters
 
 extern crate base64;
+extern crate hound;
 extern crate image;
 extern crate lodepng;
 extern crate rand;
 extern crate serde_json;
-extern crate hound;
 
+mod audio;
 pub mod filters;
 mod fonts;
 mod images;
 mod samples;
-mod audio;
 
 pub use samples::{by_name, gen, CaptchaName, Difficulty};
 
@@ -66,12 +66,12 @@ use filters::Filter;
 use fonts::{Default, Font};
 use images::{Image, Pixl};
 
-use rand::thread_rng;
+use audio::Audio;
 use image::ImageResult as Result;
 use rand::prelude::*;
+use rand::thread_rng;
 use std::cmp::{max, min};
 use std::path::Path;
-use audio::Audio;
 
 /// Represents the area which contains text in a CAPTCHA.
 #[derive(Clone, Debug)]
@@ -89,10 +89,10 @@ pub struct Geometry {
 impl Geometry {
     pub fn new(left: u32, right: u32, top: u32, bottom: u32) -> Geometry {
         Geometry {
-            left: left,
-            right: right,
-            top: top,
-            bottom: bottom,
+            left,
+            right,
+            top,
+            bottom,
         }
     }
 }
@@ -170,8 +170,8 @@ impl Captcha {
     ///
     /// Important: The characters have to exist for the current font. You can get all characters
     /// which are supported by the current font by calling supported_chars().
-    pub fn set_chars(&mut self, c: &Vec<char>) -> &mut Self {
-        self.use_font_chars = c.clone();
+    pub fn set_chars(&mut self, c: &[char]) -> &mut Self {
+        self.use_font_chars = c.to_vec();
         self
     }
 
@@ -179,30 +179,24 @@ impl Captcha {
         let mut rng = thread_rng();
         match self.use_font_chars.choose(&mut rng) {
             None => None,
-            Some(c) => match self.font.png(c.clone()) {
+            Some(c) => match self.font.png(*c) {
                 None => None,
-                Some(p) => match Image::from_png(p) {
-                    None => None,
-                    Some(i) => Some((c.clone(), i)),
-                },
+                Some(p) => Image::from_png(p).map(|i| (*c, i)),
             },
         }
     }
 
     /// Adds a random character using the current font.
     pub fn add_char(&mut self) -> &mut Self {
-        match self.random_char_as_image() {
-            Some((c, i)) => {
-                let x = self.text_area.right;
-                let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
-                self.img.add_image(x, y, &i);
+        if let Some((c, i)) = self.random_char_as_image() {
+            let x = self.text_area.right;
+            let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
+            self.img.add_image(x, y, &i);
 
-                self.text_area.top = min(self.text_area.top, y);
-                self.text_area.right = x + i.width() - 1;
-                self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
-                self.chars.push(c);
-            }
-            _ => {}
+            self.text_area.top = min(self.text_area.top, y);
+            self.text_area.right = x + i.width() - 1;
+            self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
+            self.chars.push(c);
         }
 
         self
@@ -290,10 +284,7 @@ impl Captcha {
     /// simply having the audio for each letter and comparing them with the current challenge.
     pub fn as_wav(&self) -> Vec<Option<Vec<u8>>> {
         let audio = Audio::new();
-        self.chars()
-            .iter()
-            .map(|x| audio.as_wav(*x))
-            .collect()
+        self.chars().iter().map(|x| audio.as_wav(*x)).collect()
     }
 
     /// Returns the CAPTCHA as a png image.
@@ -307,10 +298,7 @@ impl Captcha {
     }
 
     pub fn as_base64(&self) -> Option<String> {
-        match self.as_png() {
-            Some(vec) => Some(base64::encode(vec)),
-            None => None
-        }
+        self.as_png().map(base64::encode)
     }
 
     /// Returns a tuple which contains the characters that have been added to this CAPTCHA

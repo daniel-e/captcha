@@ -1,8 +1,8 @@
 extern crate captcha;
 
 use captcha::{gen, Difficulty};
-use std::io::prelude::*;
 use std::fs::File;
+use std::io::prelude::*;
 
 fn main() -> std::io::Result<()> {
     let captcha = gen(Difficulty::Easy);
