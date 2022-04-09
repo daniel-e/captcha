@@ -17,8 +17,8 @@ pub struct Wave {
 impl Wave {
     pub fn new(f: f64, amp: f64) -> Wave {
         Wave {
-            f: f,
-            amp: amp,
+            f,
+            amp,
             d: Direction::HORIZONTAL,
         }
     }
@@ -38,7 +38,7 @@ impl Wave {
     }
 
     pub fn direction(self, d: Direction) -> Wave {
-        Wave { d: d, ..self }
+        Wave { d, ..self }
     }
 }
 

@@ -18,8 +18,10 @@ fn main() {
                 .circles(1)
                 .area(Geometry::new(40, 150, 50, 70)),
         );
-    c.save(Path::new("captcha.png"))
-        .expect("save failed");
+    c.save(Path::new("captcha.png")).expect("save failed");
 
-    println!("CAPTCHA with text {} written to captcha.png", c.chars_as_string());
+    println!(
+        "CAPTCHA with text {} written to captcha.png",
+        c.chars_as_string()
+    );
 }
