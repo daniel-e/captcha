@@ -1,0 +1,4 @@
+Changes since 0.0.8
+
+- Rng for the CAPTCHA generation can be set (https://github.com/daniel-e/captcha/pull/15)
+

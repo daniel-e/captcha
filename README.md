@@ -47,10 +47,7 @@ fn main() {
     cd captcha
     cargo run --example captcha
 
-This example creates the following three CAPTCHA images:
-* /tmp/captcha1.png
-* /tmp/captcha2.png
-* /tmp/captcha3.png
+This example creates 12 CAPTCHA images (PNG images) in the current directory.
 
 The generated images will look like the following three images:
 

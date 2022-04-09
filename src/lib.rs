@@ -97,24 +97,27 @@ impl Geometry {
     }
 }
 
+pub type Captcha = RngCaptcha<ThreadRng>;
+
 /// A CAPTCHA.
-pub struct Captcha {
+pub struct RngCaptcha<T> {
     img: Image,
     font: Box<dyn Font>,
     text_area: Geometry,
     chars: Vec<char>,
     use_font_chars: Vec<char>,
     color: Option<[u8; 3]>,
+    rng: T,
 }
 
-impl Captcha {
-    /// Returns an empty CAPTCHA.
-    pub fn new() -> Captcha {
+impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
+
+    pub fn from_rng(rng: T) -> RngCaptcha<T> {
         // TODO fixed width + height
         let w = 400;
         let h = 300;
         let f = Box::new(Default::new());
-        Captcha {
+        RngCaptcha::<T> {
             use_font_chars: f.chars(),
             img: Image::new(w, h),
             font: f,
@@ -126,7 +129,13 @@ impl Captcha {
             },
             chars: vec![],
             color: None,
+            rng,
         }
+    }
+
+    /// Returns an empty CAPTCHA.
+    pub fn new() -> Captcha {
+        Captcha::from_rng(thread_rng())
     }
 
     /// Applies the filter `f` to the CAPTCHA.
@@ -175,9 +184,8 @@ impl Captcha {
         self
     }
 
-    fn random_char_as_image(&self) -> Option<(char, Image)> {
-        let mut rng = thread_rng();
-        match self.use_font_chars.choose(&mut rng) {
+    fn random_char_as_image(&mut self) -> Option<(char, Image)> {
+        match self.use_font_chars.choose(&mut self.rng) {
             None => None,
             Some(c) => match self.font.png(c.clone()) {
                 None => None,
