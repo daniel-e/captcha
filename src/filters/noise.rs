@@ -9,7 +9,7 @@ pub struct Noise {
 
 impl Noise {
     pub fn new(prob: f32) -> Noise {
-        Noise { prob: prob }
+        Noise { prob }
     }
 }
 

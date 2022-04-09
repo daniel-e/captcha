@@ -3,21 +3,21 @@ extern crate time;
 
 use captcha::{gen, Difficulty};
 use std::thread;
-use time::PreciseTime;
+use time::Instant;
 
 fn main() {
     let n = 500;
-    let nthreads = 8;
+    let nthreads: i64 = 8;
     let mut threads = vec![];
 
-    let b = PreciseTime::now();
+    let b = Instant::now();
 
     for _ in 0..nthreads {
         let h = thread::spawn(move || {
             for _ in 0..n {
                 gen(Difficulty::Easy).as_tuple();
             }
-            println!("done {}ms", time::precise_time_ns() / 1000 / 1000);
+            println!("done {:?} ms", b.elapsed().whole_milliseconds());
         });
         threads.push(h);
     }
@@ -26,10 +26,15 @@ fn main() {
         i.join().expect("join failed");
     }
 
-    let c = PreciseTime::now();
-    let d = b.to(c).num_milliseconds();
+    let d = b.elapsed();
     println!("n                     : {}", n * nthreads);
-    println!("time in ms total      : {}", d);
-    println!("time in ms per captcha: {}", d / (n * nthreads));
-    println!("#captchs per second   : {}", n * nthreads * 1000 / d);
+    println!("time in ms total      : {}", d.whole_milliseconds());
+    println!(
+        "time in ms per captcha: {}",
+        d.whole_milliseconds() as f64 / (n * nthreads) as f64
+    );
+    println!(
+        "#captchs per second   : {}",
+        (n * nthreads * 1000) / (d.whole_milliseconds() as i64)
+    );
 }

@@ -8,10 +8,7 @@ pub struct Grid {
 
 impl Grid {
     pub fn new(x_gap: u32, y_gap: u32) -> Grid {
-        Grid {
-            x_gap: x_gap,
-            y_gap: y_gap,
-        }
+        Grid { x_gap, y_gap }
     }
 }
 
