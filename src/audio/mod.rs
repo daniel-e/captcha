@@ -1,9 +1,14 @@
+#[cfg(feature = "audio")]
 use base64::decode;
 #[cfg(feature = "audio")]
 use hound::Result;
+#[cfg(feature = "audio")]
 use rand::{thread_rng, Rng};
+#[cfg(feature = "audio")]
 use serde_json;
+#[cfg(feature = "audio")]
 use std::collections::HashMap;
+#[cfg(feature = "audio")]
 use std::io::Cursor;
 
 #[cfg(feature = "audio")]
