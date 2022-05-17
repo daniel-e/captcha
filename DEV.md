@@ -9,13 +9,10 @@ Run some tests:
     cargo build --release
     cargo example --release captcha
 
-Update:
+Perform the following steps:
 
 * Version in Cargo.toml
 * ChangeLog 
-
-Publish to crates.io
-
-    cargo publish
-
-See https://doc.rust-lang.org/book/ch14-02-publishing-to-crates-io.html for details.
+* Push all changed
+* Create a release on GitHub
+* Publish to crates.io via `cargo publish` [details](https://doc.rust-lang.org/book/ch14-02-publishing-to-crates-io.html)
