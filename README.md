@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/daniel-e/captcha.svg?branch=master)](https://travis-ci.org/daniel-e/captcha)
 [![GitHub license](https://img.shields.io/github/license/daniel-e/captcha)](https://github.com/daniel-e/captcha/blob/master/LICENSE.md)
 [![GitHub stars](https://img.shields.io/github/stars/daniel-e/captcha)](https://github.com/daniel-e/captcha/stargazers)
+[![dependency status](https://deps.rs/repo/github/daniel-e/captcha/status.svg)](https://deps.rs/repo/github/daniel-e/captcha)
 
 A library to generate CAPTCHAs like these:
 
