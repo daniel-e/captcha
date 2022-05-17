@@ -1,7 +1,7 @@
 [package]
 name = "captcha"
-version = "0.0.8"
-authors = ["daniel-e <git.daniele@gmail.com>"]
+version = "0.0.9"
+authors = ["Daniel Etzold <detzold@gmail.com>"]
 description = "Library for generating CAPTCHAs."
 license-file = "LICENSE.md"
 keywords = ["CAPTCHA"]

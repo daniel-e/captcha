@@ -1,4 +1,4 @@
-Changes since 0.0.8
+0.0.9
 
 - Rng for the CAPTCHA generation can be set (https://github.com/daniel-e/captcha/pull/15)
 - audio is a Rust feature that can be disabled. (https://github.com/daniel-e/captcha/pull/17)

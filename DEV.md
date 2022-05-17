@@ -1,12 +1,20 @@
-Publishing to Crates.io
-=======================
+# Building a Release
 
-Do this once:
+If not logged in at crates.io yet:
 
     cargo login
 
-Once you are logged in
-======================
+Run some tests:
+
+    cargo build --release
+    cargo example --release captcha
+
+Update:
+
+* Version in Cargo.toml
+* ChangeLog 
+
+Publish to crates.io
 
     cargo publish
 
