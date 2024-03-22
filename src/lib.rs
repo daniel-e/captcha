@@ -291,7 +291,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     /// Adds the given number of random characters to the CAPTCHA using the current font.
     pub fn add_random_chars(&mut self, n: u32) -> &mut Self {
         for _ in 0..n {
-            self.random_char_as_image();
+            self.add_random_char();
         }
         self
     }
@@ -350,7 +350,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
 mod tests {
     use filters::{Grid, Noise};
     use fonts::Default;
-    use Captcha;
+    use ::{Captcha, Difficulty};
 
     use std::path::Path;
 
@@ -370,6 +370,11 @@ mod tests {
             .save(Path::new("/tmp/captcha.png"))
             .expect("save failed");
         c.as_png().expect("no png");
+    }
+
+    #[test]
+    fn gen_difficult_easy() {
+        assert!(::gen(Difficulty::Easy).as_png().is_some())
     }
 
     #[test]
