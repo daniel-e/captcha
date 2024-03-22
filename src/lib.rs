@@ -33,7 +33,7 @@
 //!
 //! # fn main() {
 //! Captcha::new()
-//!     .add_chars(5)
+//!     .add_random_chars(5)
 //!     .apply_filter(Noise::new(0.4))
 //!     .apply_filter(Wave::new(2.0, 20.0).horizontal())
 //!     .apply_filter(Wave::new(2.0, 20.0).vertical())
@@ -189,28 +189,45 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     fn random_char_as_image(&mut self) -> Option<(char, Image)> {
         match self.use_font_chars.choose(&mut self.rng) {
             None => None,
-            Some(c) => match self.font.png(*c) {
-                None => None,
-                Some(p) => Image::from_png(p).map(|i| (*c, i)),
-            },
+            Some(c) => self.char_as_image(c),
         }
     }
 
-    /// Adds a random character using the current font.
-    pub fn add_char(&mut self) -> &mut Self {
-        if let Some((c, i)) = self.random_char_as_image() {
-            let x = self.text_area.right;
-            let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
-            self.img.add_image(x, y, &i);
+    fn char_as_image(&self, c: &char) -> Option<(char, Image)> {
+        match self.font.png(*c) {
+            None => None,
+            Some(p) => Image::from_png(p).map(|i| (*c, i)),
+        }
+    }
 
-            self.text_area.top = min(self.text_area.top, y);
-            self.text_area.right = x + i.width() - 1;
-            self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
-            self.chars.push(c);
+    fn add_char_to_captcha(&mut self, c: char, i: Image) {
+        let x = self.text_area.right;
+        let y = (self.text_area.bottom + self.text_area.top) / 2 - i.height() / 2;
+        self.img.add_image(x, y, &i);
+
+        self.text_area.top = min(self.text_area.top, y);
+        self.text_area.right = x + i.width() - 1;
+        self.text_area.bottom = max(self.text_area.bottom, y + i.height() - 1);
+        self.chars.push(c);
+        // TODO automatically resize if many characters are added
+    }
+
+    /// Adds a character using the current font.
+    pub fn add_char(&mut self, c: char) -> &mut Self {
+        if let Some((c, i)) = self.char_as_image(&c) {
+            self.add_char_to_captcha(c, i);
         }
 
         self
-        // TODO automatically resize if many characters are added
+    }
+
+    /// Adds a random character using the current font.
+    pub fn add_random_char(&mut self) -> &mut Self {
+        if let Some((c, i)) = self.random_char_as_image() {
+            self.add_char_to_captcha(c, i);
+        }
+
+        self
     }
 
     /// Adds a red box to the CAPTCHA representing the area which contains text.
@@ -272,9 +289,9 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     }
 
     /// Adds the given number of random characters to the CAPTCHA using the current font.
-    pub fn add_chars(&mut self, n: u32) -> &mut Self {
+    pub fn add_random_chars(&mut self, n: u32) -> &mut Self {
         for _ in 0..n {
-            self.add_char();
+            self.random_char_as_image();
         }
         self
     }
@@ -341,9 +358,9 @@ mod tests {
     fn it_works() {
         let mut c = Captcha::new();
         c.set_font(Default::new())
-            .add_char()
-            .add_char()
-            .add_char()
+            .add_random_char()
+            .add_random_char()
+            .add_random_char()
             .apply_filter(Noise::new(0.1))
             .apply_filter(Grid::new(20, 10))
             .add_text_area();

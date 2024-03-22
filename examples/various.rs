@@ -9,7 +9,7 @@ fn main() {
     println!("{:?}", c.supported_chars());
 
     c.set_chars(&['a', 'b'])
-        .add_chars(5)
+        .add_random_chars(5)
         .apply_filter(Noise::new(0.2))
         .apply_filter(Wave::new(2.0, 20.0))
         .view(220, 120)
