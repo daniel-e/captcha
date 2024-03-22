@@ -7,7 +7,7 @@ use std::path::Path;
 
 fn main() {
     let mut c = Captcha::new();
-    c.add_chars(5)
+    c.add_random_chars(5)
         .apply_filter(Noise::new(0.2))
         .apply_filter(Wave::new(2.0, 20.0))
         .view(220, 120)
