@@ -1,4 +1,4 @@
-use base64::decode;
+use base64::{engine::general_purpose, Engine};
 use serde_json;
 use std::collections::HashMap;
 
@@ -11,7 +11,7 @@ pub trait Font {
     fn png(&self, letter: char) -> Option<Vec<u8>> {
         match self.png_as_base64(letter) {
             None => None,
-            Some(s) => match decode(s) {
+            Some(s) => match general_purpose::STANDARD.decode(s) {
                 Err(_) => None,
                 Ok(v) => Some(v),
             },

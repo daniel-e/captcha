@@ -1,5 +1,5 @@
 #[cfg(feature = "audio")]
-use base64::decode;
+use base64::{engine::general_purpose, Engine};
 #[cfg(feature = "audio")]
 use hound::Result;
 #[cfg(feature = "audio")]
@@ -29,7 +29,7 @@ impl Audio {
     pub fn as_wav(&self, letter: char) -> Option<Vec<u8>> {
         match self.data.get(&letter) {
             None => None,
-            Some(s) => match decode(s) {
+            Some(s) => match general_purpose::STANDARD.decode(s) {
                 Err(_) => None,
                 Ok(v) => match Audio::add_noise(v) {
                     Ok(v) => Some(v),
