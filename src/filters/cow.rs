@@ -68,7 +68,7 @@ impl Cow {
         for &(x, y) in v {
             let mut p = i.get_pixel(x, y);
             p.invert();
-            i.put_pixel(x as u32, y as u32, p);
+            i.put_pixel(x, y, p);
         }
     }
 }

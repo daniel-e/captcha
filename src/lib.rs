@@ -63,6 +63,7 @@ mod samples;
 
 pub use samples::{by_name, gen, CaptchaName, Difficulty};
 
+use base64::{engine::general_purpose, Engine};
 use filters::Filter;
 use fonts::{Default, Font};
 use images::{Image, Pixl};
@@ -113,7 +114,6 @@ pub struct RngCaptcha<T> {
 }
 
 impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
-
     pub fn from_rng(rng: T) -> RngCaptcha<T> {
         // TODO fixed width + height
         let w = 400;
@@ -309,7 +309,8 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     }
 
     pub fn as_base64(&self) -> Option<String> {
-        self.as_png().map(base64::encode)
+        self.as_png()
+            .map(|png| general_purpose::STANDARD.encode(&png))
     }
 
     /// Returns a tuple which contains the characters that have been added to this CAPTCHA
@@ -317,10 +318,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     ///
     /// Returns `None` on error.
     pub fn as_tuple(&self) -> Option<(String, Vec<u8>)> {
-        match self.as_png() {
-            None => None,
-            Some(p) => Some((self.chars_as_string(), p)),
-        }
+        self.as_png().map(|p| (self.chars_as_string(), p))
     }
 
     /// Returns the supported characters of the current font.
