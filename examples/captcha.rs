@@ -1,7 +1,6 @@
-extern crate captcha;
+use std::path::Path;
 
 use captcha::{by_name, gen, CaptchaName, Difficulty};
-use std::path::Path;
 
 fn main() {
     gen(Difficulty::Easy)

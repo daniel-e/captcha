@@ -1,21 +1,15 @@
-use base64::decode;
-use serde_json;
+use base64::{prelude::BASE64_STANDARD, Engine};
 use std::collections::HashMap;
 
 pub trait Font {
-    fn png_as_base64(&self, letter: char) -> Option<&String>;
+    fn png_as_base64(&self, letter: char) -> Option<&str>;
 
     fn chars(&self) -> Vec<char>;
 
     /// Returns None if letter does not exist or if letter could not decoded.
     fn png(&self, letter: char) -> Option<Vec<u8>> {
-        match self.png_as_base64(letter) {
-            None => None,
-            Some(s) => match decode(s) {
-                Err(_) => None,
-                Ok(v) => Some(v),
-            },
-        }
+        self.png_as_base64(letter)
+            .map(|v| BASE64_STANDARD.decode(v).ok())?
     }
 }
 
@@ -24,18 +18,18 @@ pub struct Default {
 }
 
 impl Default {
-    pub fn new() -> Default {
-        let json = include_str!("font_default.json").to_string();
+    pub fn new() -> Self {
+        let json = include_str!("font_default.json");
 
-        Default {
-            data: serde_json::from_str(&json).expect("invalid json"),
+        Self {
+            data: serde_json::from_str(json).expect("invalid json"),
         }
     }
 }
 
 impl Font for Default {
-    fn png_as_base64(&self, letter: char) -> Option<&String> {
-        self.data.get(&letter)
+    fn png_as_base64(&self, letter: char) -> Option<&str> {
+        self.data.get(&letter).map(|v| v.as_str())
     }
 
     fn chars(&self) -> Vec<char> {
@@ -45,8 +39,8 @@ impl Font for Default {
 
 #[cfg(test)]
 mod tests {
-    use fonts::{Default, Font};
-    use images::Image;
+    use crate::fonts::{Default, Font};
+    use crate::images::Image;
 
     #[test]
     fn fonts_default() {

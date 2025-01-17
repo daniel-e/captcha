@@ -1,5 +1,5 @@
-use filters::Filter;
-use images::{Image, Pixl};
+use crate::filters::Filter;
+use crate::images::{Image, Pixl};
 
 pub struct Grid {
     y_gap: u32,
@@ -7,8 +7,8 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new(x_gap: u32, y_gap: u32) -> Grid {
-        Grid { x_gap, y_gap }
+    pub fn new(x_gap: u32, y_gap: u32) -> Self {
+        Self { x_gap, y_gap }
     }
 }
 

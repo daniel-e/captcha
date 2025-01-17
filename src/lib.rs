@@ -16,7 +16,6 @@
 //! characters is randomly selected between 4 and 6 letters (inclusive).
 //!
 //! ```
-//! # extern crate captcha;
 //! use captcha::{gen, Difficulty};
 //!
 //! # fn main() {
@@ -27,7 +26,6 @@
 //! To be more flexible you can build CAPTCHAs manually as well.
 //!
 //! ```
-//! # extern crate captcha;
 //! use captcha::Captcha;
 //! use captcha::filters::{Noise, Wave, Dots};
 //!
@@ -47,28 +45,22 @@
 // TODO resize characters
 // TODO overlap characters
 
-extern crate base64;
-#[cfg(feature = "audio")]
-extern crate hound;
-extern crate image;
-extern crate lodepng;
-extern crate rand;
-extern crate serde_json;
-
 mod audio;
 pub mod filters;
 mod fonts;
 mod images;
 mod samples;
 
-pub use samples::{by_name, gen, CaptchaName, Difficulty};
-
-use filters::Filter;
-use fonts::{Default, Font};
-use images::{Image, Pixl};
+pub use crate::samples::{by_name, gen, CaptchaName, Difficulty};
 
 #[cfg(feature = "audio")]
-use audio::Audio;
+use crate::audio::Audio;
+use crate::filters::Filter;
+use crate::fonts::{Default, Font};
+use crate::images::{Image, Pixl};
+
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use image::ImageResult as Result;
 use rand::prelude::*;
 use rand::thread_rng;
@@ -89,8 +81,8 @@ pub struct Geometry {
 }
 
 impl Geometry {
-    pub fn new(left: u32, right: u32, top: u32, bottom: u32) -> Geometry {
-        Geometry {
+    pub fn new(left: u32, right: u32, top: u32, bottom: u32) -> Self {
+        Self {
             left,
             right,
             top,
@@ -113,7 +105,6 @@ pub struct RngCaptcha<T> {
 }
 
 impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
-
     pub fn from_rng(rng: T) -> RngCaptcha<T> {
         // TODO fixed width + height
         let w = 400;
@@ -172,7 +163,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     ///
     /// The format that is written is determined from the filename's extension. On error `Err` is
     /// returned.
-    pub fn save(&self, p: &Path) -> Result<()> {
+    pub fn save<P: AsRef<Path>>(&self, p: P) -> Result<()> {
         let i = self.apply_transformations();
         i.save(p)
     }
@@ -309,7 +300,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     }
 
     pub fn as_base64(&self) -> Option<String> {
-        self.as_png().map(base64::encode)
+        self.as_png().map(|v| BASE64_STANDARD.encode(v))
     }
 
     /// Returns a tuple which contains the characters that have been added to this CAPTCHA
@@ -317,10 +308,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
     ///
     /// Returns `None` on error.
     pub fn as_tuple(&self) -> Option<(String, Vec<u8>)> {
-        match self.as_png() {
-            None => None,
-            Some(p) => Some((self.chars_as_string(), p)),
-        }
+        self.as_png().map(|v| (self.chars_as_string(), v))
     }
 
     /// Returns the supported characters of the current font.
@@ -331,9 +319,9 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
 
 #[cfg(test)]
 mod tests {
-    use filters::{Grid, Noise};
-    use fonts::Default;
-    use Captcha;
+    use crate::filters::{Grid, Noise};
+    use crate::fonts::Default;
+    use crate::Captcha;
 
     use std::path::Path;
 

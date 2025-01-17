@@ -1,6 +1,5 @@
-extern crate captcha;
-
 use captcha::{gen, Difficulty};
+
 use std::fs::File;
 use std::io::prelude::*;
 

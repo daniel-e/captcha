@@ -1,6 +1,7 @@
 [package]
 name = "captcha"
 version = "0.0.9"
+edition = "2021"
 authors = ["Daniel Etzold <detzold@gmail.com>"]
 description = "Library for generating CAPTCHAs."
 license-file = "LICENSE.md"
@@ -12,15 +13,12 @@ homepage = "https://github.com/daniel-e/captcha"
 repository = "https://github.com/daniel-e/captcha"
 
 [dependencies]
-image = { version = "0.24.2", default-features = false, features = ["png"] }
+image = { version = "0.25.5", default-features = false, features = ["png"] }
 rand = "0.8.5"
 serde_json = "1.0"
-base64 = "0.13"
+base64 = "0.22"
 lodepng = "3.6.1"
 hound = { version = "3.4", optional = true }
-
-[dev-dependencies]
-time = "0.3.9"
 
 [features]
 default = ["audio"]

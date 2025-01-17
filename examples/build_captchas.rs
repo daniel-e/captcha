@@ -1,7 +1,7 @@
-extern crate captcha;
-
-use captcha::filters::{Cow, Noise, Wave};
-use captcha::{Captcha, Geometry};
+use captcha::{
+    filters::{Cow, Noise, Wave},
+    Captcha, Geometry,
+};
 
 use std::path::Path;
 

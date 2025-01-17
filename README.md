@@ -1,4 +1,5 @@
 # CAPTCHA library written in Rust
+
 [![Build Status](https://travis-ci.org/daniel-e/captcha.svg?branch=master)](https://travis-ci.org/daniel-e/captcha)
 [![GitHub license](https://img.shields.io/github/license/daniel-e/captcha)](https://github.com/daniel-e/captcha/blob/master/LICENSE.md)
 [![GitHub stars](https://img.shields.io/github/stars/daniel-e/captcha)](https://github.com/daniel-e/captcha/stargazers)
@@ -28,8 +29,6 @@ captcha = "*"
 In your source file do:
 
 ```rust
-extern crate captcha;
-
 use captcha::Captcha;
 use captcha::filters::Noise;
 use std::path::Path;
@@ -57,3 +56,4 @@ The generated images will look like the following three images:
 ![captcha](doc/captcha1.png) &nbsp; ![captcha](doc/captcha2.png)
 &nbsp;
 ![captcha](doc/captcha3.png)
+
