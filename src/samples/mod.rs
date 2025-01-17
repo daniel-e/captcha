@@ -6,16 +6,15 @@
 //! # Examples
 //!
 //! ```
-//! # extern crate captcha;
 //! use captcha::{gen, Difficulty};
 //!
 //! # fn main() {
 //! gen(Difficulty::Easy).as_png();
 //! # }
 //! ```
-use filters::{Cow, Dots, Grid, Noise, Wave};
+use crate::filters::{Cow, Dots, Grid, Noise, Wave};
+use crate::{Captcha, Geometry};
 use rand::{thread_rng, Rng};
-use {Captcha, Geometry};
 
 const WIDTH: u32 = 220;
 const HEIGHT: u32 = 120;

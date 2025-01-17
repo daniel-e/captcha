@@ -2,9 +2,9 @@ use rand::prelude::*;
 use std::cmp::{max, min};
 use std::collections::BTreeSet;
 
-use filters::Filter;
-use images::Image;
-use Geometry;
+use crate::filters::Filter;
+use crate::images::Image;
+use crate::Geometry;
 
 pub struct Cow {
     min_radius: u32,
@@ -14,9 +14,9 @@ pub struct Cow {
     geometry: Option<Geometry>,
 }
 
-impl Cow {
-    pub fn new() -> Cow {
-        Cow {
+impl Default for Cow {
+    fn default() -> Self {
+        Self {
             min_radius: 10,
             max_radius: 20,
             n: 3,
@@ -24,22 +24,28 @@ impl Cow {
             geometry: None,
         }
     }
+}
+
+impl Cow {
+    pub fn new() -> Self {
+        Self::default()
+    }
 
     pub fn circles(self, n: u32) -> Self {
-        Cow { n, ..self }
+        Self { n, ..self }
     }
 
     pub fn min_radius(self, min_radius: u32) -> Self {
-        Cow { min_radius, ..self }
+        Self { min_radius, ..self }
     }
 
     pub fn max_radius(self, max_radius: u32) -> Self {
-        Cow { max_radius, ..self }
+        Self { max_radius, ..self }
     }
 
     // right + bottom = inclusive
     pub fn area(self, g: Geometry) -> Self {
-        Cow {
+        Self {
             geometry: Some(g),
             ..self
         }
@@ -68,7 +74,7 @@ impl Cow {
         for &(x, y) in v {
             let mut p = i.get_pixel(x, y);
             p.invert();
-            i.put_pixel(x as u32, y as u32, p);
+            i.put_pixel(x, y, p);
         }
     }
 }
@@ -77,10 +83,10 @@ impl Filter for Cow {
     fn apply(&self, i: &mut Image) {
         let mut rng = thread_rng();
 
-        let g = match self.geometry {
-            Some(ref x) => x.clone(),
-            None => Geometry::new(0, i.width() - 1, 0, i.height() - 1),
-        };
+        let g = self
+            .geometry
+            .clone()
+            .unwrap_or(Geometry::new(0, i.width() - 1, 0, i.height() - 1));
 
         let mut pixels = vec![(
             rng.gen_range(g.left..g.right + 1),

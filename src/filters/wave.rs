@@ -1,11 +1,11 @@
 use std::f64::consts;
 
-use filters::Filter;
-use images::Image;
+use crate::filters::Filter;
+use crate::images::Image;
 
 pub enum Direction {
-    HORIZONTAL,
-    VERTICAL,
+    Horizontal,
+    Vertical,
 }
 
 pub struct Wave {
@@ -15,29 +15,29 @@ pub struct Wave {
 }
 
 impl Wave {
-    pub fn new(f: f64, amp: f64) -> Wave {
+    pub fn new(f: f64, amp: f64) -> Self {
         Wave {
             f,
             amp,
-            d: Direction::HORIZONTAL,
+            d: Direction::Horizontal,
         }
     }
 
-    pub fn horizontal(self) -> Wave {
+    pub fn horizontal(self) -> Self {
         Wave {
-            d: Direction::HORIZONTAL,
+            d: Direction::Horizontal,
             ..self
         }
     }
 
-    pub fn vertical(self) -> Wave {
+    pub fn vertical(self) -> Self {
         Wave {
-            d: Direction::VERTICAL,
+            d: Direction::Vertical,
             ..self
         }
     }
 
-    pub fn direction(self, d: Direction) -> Wave {
+    pub fn direction(self, d: Direction) -> Self {
         Wave { d, ..self }
     }
 }
@@ -49,7 +49,7 @@ impl Filter for Wave {
         let o = i.clone();
         i.clear();
         match self.d {
-            Direction::HORIZONTAL => {
+            Direction::Horizontal => {
                 // height of image changes
                 for x in 0..i.width() {
                     let f =
@@ -62,7 +62,7 @@ impl Filter for Wave {
                     }
                 }
             }
-            Direction::VERTICAL => {
+            Direction::Vertical => {
                 for y in 0..i.height() {
                     let f =
                         (y as f64 * 2.0 * consts::PI * self.f / i.width() as f64).sin() * self.amp;

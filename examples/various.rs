@@ -1,9 +1,10 @@
-extern crate captcha;
-
-use captcha::filters::{Cow, Noise, Wave};
-use captcha::{Captcha, Geometry};
-
 use std::path::Path;
+
+use captcha::{
+    filters::{Cow, Noise, Wave},
+    Captcha, Geometry,
+};
+
 fn main() {
     let mut c = Captcha::new();
     println!("{:?}", c.supported_chars());

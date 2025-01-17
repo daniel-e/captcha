@@ -1,11 +1,11 @@
 #[cfg(feature = "audio")]
-use base64::decode;
+use base64::prelude::BASE64_STANDARD;
+#[cfg(feature = "audio")]
+use base64::Engine;
 #[cfg(feature = "audio")]
 use hound::Result;
 #[cfg(feature = "audio")]
 use rand::{thread_rng, Rng};
-#[cfg(feature = "audio")]
-use serde_json;
 #[cfg(feature = "audio")]
 use std::collections::HashMap;
 #[cfg(feature = "audio")]
@@ -18,25 +18,21 @@ pub struct Audio {
 
 #[cfg(feature = "audio")]
 impl Audio {
-    pub fn new() -> Audio {
-        let json = include_str!("audio.json").to_string();
+    pub fn new() -> Self {
+        let json = include_str!("audio.json");
 
-        Audio {
-            data: serde_json::from_str(&json).expect("invalid json"),
+        Self {
+            data: serde_json::from_str(json).expect("invalid json"),
         }
     }
 
     pub fn as_wav(&self, letter: char) -> Option<Vec<u8>> {
-        match self.data.get(&letter) {
-            None => None,
-            Some(s) => match decode(s) {
-                Err(_) => None,
-                Ok(v) => match Audio::add_noise(v) {
-                    Ok(v) => Some(v),
-                    _ => None,
-                },
-            },
-        }
+        self.data
+            .get(&letter)
+            .map(|v| BASE64_STANDARD.decode(v))?
+            .ok()
+            .map(Audio::add_noise)?
+            .ok()
     }
 
     fn add_noise(v: Vec<u8>) -> Result<Vec<u8>> {
@@ -77,8 +73,8 @@ impl Audio {
 #[cfg(feature = "audio")]
 #[cfg(test)]
 mod tests {
-    use audio::Audio;
-    use fonts::{Default, Font};
+    use crate::audio::Audio;
+    use crate::fonts::{Default, Font};
     use std::cmp::max;
 
     #[test]

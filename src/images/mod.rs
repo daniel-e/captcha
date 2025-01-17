@@ -3,7 +3,6 @@ use std::cmp::{max, min};
 use std::path::Path;
 
 use image::{load_from_memory, ImageBuffer, Rgb, RgbImage};
-use lodepng;
 
 #[derive(Clone, Copy)]
 pub struct Pixl {
@@ -16,16 +15,16 @@ pub struct Image {
 }
 
 impl Pixl {
-    pub fn new(r: u8, g: u8, b: u8) -> Pixl {
-        Pixl { rgb: [r, g, b] }
+    pub fn new(r: u8, g: u8, b: u8) -> Self {
+        Self { rgb: [r, g, b] }
     }
 
-    pub fn black() -> Pixl {
-        Pixl::new(0, 0, 0)
+    pub fn black() -> Self {
+        Self::new(0, 0, 0)
     }
 
-    pub fn red() -> Pixl {
-        Pixl::new(255, 0, 0)
+    pub fn red() -> Self {
+        Self::new(255, 0, 0)
     }
 
     pub fn invert(&mut self) {
@@ -40,15 +39,12 @@ impl Image {
         Rgb::<u8>([255, 255, 255])
     }
 
-    pub fn from_png(v: Vec<u8>) -> Option<Image> {
-        match load_from_memory(&v) {
-            Err(_) => None,
-            Ok(i) => Some(Image { img: i.to_rgb8() }),
-        }
+    pub fn from_png(v: Vec<u8>) -> Option<Self> {
+        load_from_memory(&v).ok().map(|v| Self { img: v.to_rgb8() })
     }
 
-    pub fn new(w: u32, h: u32) -> Image {
-        Image {
+    pub fn new(w: u32, h: u32) -> Self {
+        Self {
             img: ImageBuffer::from_pixel(w, h, Self::pixel_white()),
         }
     }
@@ -88,7 +84,7 @@ impl Image {
         self.img.height()
     }
 
-    pub fn save(&self, p: &Path) -> Result<()> {
+    pub fn save<P: AsRef<Path>>(&self, p: P) -> Result<()> {
         self.img.save(p)
     }
 
@@ -124,9 +120,6 @@ impl Image {
         let w = self.img.width() as usize;
         let h = self.img.height() as usize;
         let i = self.img.clone().into_raw();
-        match lodepng::encode_memory(&i, w, h, lodepng::ColorType::RGB, 8) {
-            Err(_) => None,
-            Ok(v) => Some(v),
-        }
+        lodepng::encode_memory(&i, w, h, lodepng::ColorType::RGB, 8).ok()
     }
 }
