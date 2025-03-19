@@ -17,10 +17,10 @@
 //!
 //! ```
 //! # extern crate captcha;
-//! use captcha::{gen, Difficulty};
+//! use captcha::{generate, Difficulty};
 //!
 //! # fn main() {
-//! gen(Difficulty::Easy).as_png();
+//! generate(Difficulty::Easy).as_png();
 //! # }
 //! ```
 //!
@@ -61,7 +61,7 @@ mod fonts;
 mod images;
 mod samples;
 
-pub use samples::{by_name, gen, CaptchaName, Difficulty};
+pub use samples::{by_name, generate, CaptchaName, Difficulty};
 
 use filters::Filter;
 use fonts::{Default, Font};
@@ -71,7 +71,7 @@ use images::{Image, Pixl};
 use audio::Audio;
 use image::ImageResult as Result;
 use rand::prelude::*;
-use rand::thread_rng;
+use rand::rng;
 use std::cmp::{max, min};
 use std::path::Path;
 
@@ -137,7 +137,7 @@ impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
 
     /// Returns an empty CAPTCHA.
     pub fn new() -> Captcha {
-        Captcha::from_rng(thread_rng())
+        Captcha::from_rng(rng())
     }
 
     /// Applies the filter `f` to the CAPTCHA.

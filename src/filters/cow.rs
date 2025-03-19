@@ -1,4 +1,5 @@
 use rand::prelude::*;
+use rand::{rng, Rng};
 use std::cmp::{max, min};
 use std::collections::BTreeSet;
 
@@ -75,7 +76,7 @@ impl Cow {
 
 impl Filter for Cow {
     fn apply(&self, i: &mut Image) {
-        let mut rng = thread_rng();
+        let mut rnd = rng();
 
         let g = match self.geometry {
             Some(ref x) => x.clone(),
@@ -83,16 +84,16 @@ impl Filter for Cow {
         };
 
         let mut pixels = vec![(
-            rng.gen_range(g.left..g.right + 1),
-            rng.gen_range(g.top..g.bottom + 1),
+            rnd.random_range(g.left..g.right + 1),
+            rnd.random_range(g.top..g.bottom + 1),
         )];
         let mut set = BTreeSet::new();
 
         for _ in 0..self.n {
-            let mut rng = thread_rng();
-            let p = *pixels.choose(&mut rng).expect("failed");
+            let mut rnd = rng();
+            let p = *pixels.choose(&mut rnd).expect("failed");
 
-            let r = rng.gen_range(self.min_radius..self.max_radius + 1) as i32;
+            let r = rnd.random_range(self.min_radius..self.max_radius + 1) as i32;
             let v = Self::get_pixels(p.0 as i32, p.1 as i32, r, i);
             if self.allow_duplicates {
                 pixels.extend(&v);

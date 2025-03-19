@@ -1,6 +1,6 @@
 extern crate captcha;
 
-use captcha::{gen, Difficulty};
+use captcha::{generate, Difficulty};
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -8,7 +8,7 @@ use std::io::prelude::*;
 compile_error!("audio feature not enabled");
 
 fn main() -> std::io::Result<()> {
-    let captcha = gen(Difficulty::Easy);
+    let captcha = generate(Difficulty::Easy);
     let s = captcha.as_wav();
     let mut c = 0;
     for i in s {

@@ -1,16 +1,16 @@
 extern crate captcha;
 
-use captcha::{by_name, gen, CaptchaName, Difficulty};
+use captcha::{by_name, generate, CaptchaName, Difficulty};
 use std::path::Path;
 
 fn main() {
-    gen(Difficulty::Easy)
+    generate(Difficulty::Easy)
         .save(Path::new("captcha_random_easy.png"))
         .expect("save failed");
-    gen(Difficulty::Medium)
+        generate(Difficulty::Medium)
         .save(Path::new("captcha_random_medium.png"))
         .expect("save failed");
-    gen(Difficulty::Hard)
+        generate(Difficulty::Hard)
         .save(Path::new("captcha_random_hard.png"))
         .expect("save failed");
 

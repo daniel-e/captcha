@@ -1,3 +1,8 @@
+1.0.0
+
+- Renamed function "gen" to "generate" to avoid collisions with reserved keywords.
+
+
 0.0.9
 
 - Rng for the CAPTCHA generation can be set (https://github.com/daniel-e/captcha/pull/15)

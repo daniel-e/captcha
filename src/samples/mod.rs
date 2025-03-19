@@ -1,4 +1,4 @@
-//! Convinient module to create CAPTCHAs.
+//! Convenient module to create CAPTCHAs.
 //!
 //! If you are looking for a more flexible approach to create CAPTCHAs please have a look
 //! at [`Captcha`](../struct.Captcha.html).
@@ -7,14 +7,14 @@
 //!
 //! ```
 //! # extern crate captcha;
-//! use captcha::{gen, Difficulty};
+//! use captcha::{generate, Difficulty};
 //!
 //! # fn main() {
-//! gen(Difficulty::Easy).as_png();
+//! generate(Difficulty::Easy).as_png();
 //! # }
 //! ```
 use filters::{Cow, Dots, Grid, Noise, Wave};
-use rand::{thread_rng, Rng};
+use rand::{rng, Rng};
 use {Captcha, Geometry};
 
 const WIDTH: u32 = 220;
@@ -43,9 +43,9 @@ static CAPTCHA_FUNCTIONS: &[fn(Difficulty) -> Captcha] =
 /// character (including).
 ///
 /// If you need more flexibility please have a look at [`Captcha`](../struct.Captcha.html).
-pub fn gen(d: Difficulty) -> Captcha {
-    let n = thread_rng().gen::<usize>() % CAPTCHA_FUNCTIONS.len();
-    CAPTCHA_FUNCTIONS[n](d)
+pub fn generate(d: Difficulty) -> Captcha {
+    let m = CAPTCHA_FUNCTIONS.len();
+    CAPTCHA_FUNCTIONS[rng().random::<u32>() as usize % m](d)
 }
 
 // TODO document easy/medium/hard
@@ -121,7 +121,7 @@ pub fn by_name(d: Difficulty, t: CaptchaName) -> Captcha {
 // -------------------------------------------
 
 fn rnd() -> u32 {
-    thread_rng().gen_range(4..7)
+    rng().random_range(4..7)
 }
 
 fn captcha_amelia(d: Difficulty) -> Captcha {

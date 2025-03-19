@@ -1,7 +1,7 @@
 extern crate captcha;
 extern crate time;
 
-use captcha::{gen, Difficulty};
+use captcha::{generate, Difficulty};
 use std::thread;
 use time::Instant;
 
@@ -15,7 +15,7 @@ fn main() {
     for _ in 0..nthreads {
         let h = thread::spawn(move || {
             for _ in 0..n {
-                gen(Difficulty::Easy).as_tuple();
+                generate(Difficulty::Easy).as_tuple();
             }
             println!("done {:?} ms", b.elapsed().whole_milliseconds());
         });

@@ -1,4 +1,4 @@
-use rand::{thread_rng, Rng};
+use rand::{rng, Rng};
 
 use filters::Filter;
 use images::{Image, Pixl};
@@ -35,11 +35,11 @@ impl Dots {
 
 impl Filter for Dots {
     fn apply(&self, i: &mut Image) {
-        let mut rng = thread_rng();
+        let mut rng = rng();
         for _ in 0..self.n {
-            let x = rng.gen_range(0..i.width());
-            let y = rng.gen_range(0..i.height());
-            let r = rng.gen_range(self.min_radius..self.max_radius + 1);
+            let x = rng.random_range(0..i.width());
+            let y = rng.random_range(0..i.height());
+            let r = rng.random_range(self.min_radius..self.max_radius + 1);
             i.fill_circle(x, y, r, Pixl::black());
         }
     }
