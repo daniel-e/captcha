@@ -126,7 +126,7 @@ fn rnd() -> u32 {
 
 fn captcha_amelia(d: Difficulty) -> Captcha {
     let mut c = Captcha::new();
-    c.add_chars(rnd());
+    c.add_random_chars(rnd());
     match d {
         Difficulty::Easy => c
             .apply_filter(Noise::new(0.2))
@@ -155,7 +155,7 @@ fn captcha_lucy(d: Difficulty) -> Captcha {
     };
 
     let mut c = Captcha::new();
-    c.add_chars(rnd())
+    c.add_random_chars(rnd())
         .apply_filter(Noise::new(n))
         .apply_filter(Grid::new(g, g))
         .view(WIDTH, HEIGHT);
@@ -164,7 +164,7 @@ fn captcha_lucy(d: Difficulty) -> Captcha {
 
 fn captcha_mila(d: Difficulty) -> Captcha {
     let mut c = Captcha::new();
-    c.add_chars(rnd());
+    c.add_random_chars(rnd());
     match d {
         Difficulty::Easy => c.apply_filter(Noise::new(0.2)),
         Difficulty::Medium => c.apply_filter(Noise::new(0.3)),
