@@ -57,7 +57,7 @@ extern crate serde_json;
 
 mod audio;
 pub mod filters;
-mod fonts;
+pub mod fonts;
 mod images;
 mod samples;
 
@@ -113,7 +113,6 @@ pub struct RngCaptcha<T> {
 }
 
 impl<T: rand::Rng + rand::RngCore> RngCaptcha<T> {
-
     pub fn from_rng(rng: T) -> RngCaptcha<T> {
         // TODO fixed width + height
         let w = 400;
